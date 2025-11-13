@@ -1,80 +1,507 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Get started with OsintCat API in minutes"
 ---
 
-## Get started in three steps
+## Get Started in Three Steps
 
-Get your documentation site running locally and make your first customization.
+Get your API key and make your first request to the OsintCat API.
 
-### Step 1: Set up your local environment
+### Step 1: Create an Account
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
+  <Accordion icon="user-plus" title="Sign up for an account">
+    1. Visit [https://www.osintcat.net/register](https://www.osintcat.net/register)
+    2. Fill in your details and create your account
+    3. Verify your email address if required
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+  <Accordion icon="key" title="Get your API key">
+    1. Log in to your [dashboard](https://www.osintcat.net/dashboard)
+    2. Navigate to your account settings
+    3. Copy your API key
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
+    <Warning>
+    Keep your API key secure and never expose it in client-side code or public repositories.
+    </Warning>
   </Accordion>
 </AccordionGroup>
 
-### Step 2: Deploy your changes
+### Step 2: Make Your First Request
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+Test the API by checking your account information:
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/user?id=YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/user"
+params = {"id": "YOUR_API_KEY"}
+
+response = requests.get(url, params=params)
+
+if response.ok:
+    data = response.json()
+    print(f"Plan: {data['account_info']['plan']}")
+    print(f"API Requests Remaining: {data['usage']['api']['requests_remaining_today']}")
+else:
+    print(f"Error: {response.status_code}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/user?id=YOUR_API_KEY';
+
+fetch(url)
+    .then(res => res.json())
+    .then(data => {
+        console.log(`Plan: ${data.account_info.plan}`);
+        console.log(`API Requests Remaining: ${data.usage.api.requests_remaining_today}`);
+    })
+    .catch(err => console.error('error:' + err));
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+
+$url = "https://www.osintcat.net/api/user?id=YOUR_API_KEY";
+
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    $data = json_decode($response, true);
+    echo "Plan: " . $data['account_info']['plan'] . "\n";
+    echo "API Requests Remaining: " . $data['usage']['api']['requests_remaining_today'] . "\n";
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/user"
+    params := url.Values{}
+    params.Add("id", "YOUR_API_KEY")
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Printf("Error reading response: %v\n", err)
+        return
+    }
+    
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    
+    accountInfo := result["account_info"].(map[string]interface{})
+    usage := result["usage"].(map[string]interface{})
+    apiUsage := usage["api"].(map[string]interface{})
+    
+    fmt.Printf("Plan: %v\n", accountInfo["plan"])
+    fmt.Printf("API Requests Remaining: %v\n", apiUsage["requests_remaining_today"])
+}
+```
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+```ruby Ruby
+require 'net/http'
+require 'json'
+require 'uri'
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+uri = URI('https://www.osintcat.net/api/user')
+params = { id: 'YOUR_API_KEY' }
+uri.query = URI.encode_www_form(params)
 
-### Step 3: Go live
+response = Net::HTTP.get_response(uri)
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+if response.is_a?(Net::HTTPSuccess)
+    data = JSON.parse(response.body)
+    puts "Plan: #{data['account_info']['plan']}"
+    puts "API Requests Remaining: #{data['usage']['api']['requests_remaining_today']}"
+else
+    puts "Error: #{response.code}"
+end
+```
 
-## Next steps
+```java Java
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import org.json.JSONObject;
 
-Now that you have your docs running, explore these key features:
+public class OsintCatAPI {
+    public static void main(String[] args) {
+        try {
+            String apiUrl = "https://www.osintcat.net/api/user?id=YOUR_API_KEY";
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream())
+                );
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                JSONObject json = new JSONObject(response.toString());
+                JSONObject accountInfo = json.getJSONObject("account_info");
+                JSONObject usage = json.getJSONObject("usage");
+                JSONObject apiUsage = usage.getJSONObject("api");
+                
+                System.out.println("Plan: " + accountInfo.getString("plan"));
+                System.out.println("API Requests Remaining: " + apiUsage.get("requests_remaining_today"));
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
 
-<CardGroup cols={2}>
+```csharp C#
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Text.Json;
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                string url = "https://www.osintcat.net/api/user?id=YOUR_API_KEY";
+                var response = await client.GetAsync(url);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    var json = JsonDocument.Parse(content);
+                    var root = json.RootElement;
+                    
+                    Console.WriteLine($"Plan: {root.GetProperty("account_info").GetProperty("plan").GetString()}");
+                    Console.WriteLine($"API Requests Remaining: {root.GetProperty("usage").GetProperty("api").GetProperty("requests_remaining_today")}");
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+}
+```
+</CodeGroup>
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+### Step 3: Try a Lookup Endpoint
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+Now try a breach lookup:
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/breach?query=test@example.com&id=YOUR_API_KEY"
+```
 
-</CardGroup>
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/breach"
+params = {
+    "query": "test@example.com",
+    "id": "YOUR_API_KEY"
+}
+
+response = requests.get(url, params=params)
+
+if response.ok:
+    data = response.json()
+    print(f"Found {data['results_count']} breach records")
+    print(data)
+else:
+    print(f"Error: {response.status_code}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/breach?query=test@example.com&id=YOUR_API_KEY';
+
+fetch(url)
+    .then(res => res.json())
+    .then(data => {
+        console.log(`Found ${data.results_count} breach records`);
+        console.log(data);
+    })
+    .catch(err => console.error('error:' + err));
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+
+$url = "https://www.osintcat.net/api/breach?query=test@example.com&id=YOUR_API_KEY";
+
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    $data = json_decode($response, true);
+    echo "Found " . $data['results_count'] . " breach records\n";
+    echo $response;
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/breach"
+    params := url.Values{}
+    params.Add("query", "test@example.com")
+    params.Add("id", "YOUR_API_KEY")
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Printf("Error reading response: %v\n", err)
+        return
+    }
+    
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    
+    resultsCount := result["results_count"]
+    fmt.Printf("Found %v breach records\n", resultsCount)
+    fmt.Printf("%+v\n", result)
+}
+```
+
+```ruby Ruby
+require 'net/http'
+require 'json'
+require 'uri'
+
+uri = URI('https://www.osintcat.net/api/breach')
+params = { query: 'test@example.com', id: 'YOUR_API_KEY' }
+uri.query = URI.encode_www_form(params)
+
+response = Net::HTTP.get_response(uri)
+
+if response.is_a?(Net::HTTPSuccess)
+    data = JSON.parse(response.body)
+    puts "Found #{data['results_count']} breach records"
+    puts JSON.pretty_generate(data)
+else
+    puts "Error: #{response.code}"
+end
+```
+
+```java Java
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import org.json.JSONObject;
+
+public class OsintCatAPI {
+    public static void main(String[] args) {
+        try {
+            String apiUrl = "https://www.osintcat.net/api/breach?query=test@example.com&id=YOUR_API_KEY";
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream())
+                );
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                JSONObject json = new JSONObject(response.toString());
+                System.out.println("Found " + json.getInt("results_count") + " breach records");
+                System.out.println(json.toString(2));
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```csharp C#
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Text.Json;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                string url = "https://www.osintcat.net/api/breach?query=test@example.com&id=YOUR_API_KEY";
+                var response = await client.GetAsync(url);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    var json = JsonDocument.Parse(content);
+                    var root = json.RootElement;
+                    
+                    Console.WriteLine($"Found {root.GetProperty("results_count").GetInt32()} breach records");
+                    Console.WriteLine(content);
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+}
+```
+</CodeGroup>
+
+## Understanding Rate Limits
+
+<Warning>
+**Important**: Our API has a soft rate limit of **3 requests per second**. Exceeding this limit will result in a 30-minute timeout.
+</Warning>
+
+- Implement proper rate limiting in your application
+- Use exponential backoff for retries
+- Monitor your usage with the `/api/user` endpoint
+
+## API Plans
+
+### Free Plan
+- API Requests: 0 requests/day
+- Dashboard Requests: 10 requests/day
+
+### Premium Plan
+- API Requests: 50 requests/day
+- Dashboard Requests: Unlimited
+
+### Enterprise Plan
+- API Requests: Unlimited
+- Dashboard Requests: Unlimited
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+Daily limits reset at midnight UTC. Check your usage anytime with the `/api/user` endpoint.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Browse API Reference" icon="book" href="/api-reference/introduction">
+    Explore all available endpoints and their parameters.
+  </Card>
+  <Card title="View Examples" icon="code" href="/api-reference/endpoint/breach">
+    See code examples for each endpoint in multiple languages.
+  </Card>
+  <Card title="Check Usage" icon="chart-line" href="/api-reference/endpoint/user">
+    Learn how to monitor your API usage and limits.
+  </Card>
+  <Card title="Get Support" icon="headset" href="https://www.osintcat.net/dashboard">
+    Access support through your dashboard.
+  </Card>
+</CardGroup>
+
+## Common Use Cases
+
+### Security Research
+Use breach lookups and email OSINT to investigate security incidents and data leaks.
+
+### Account Verification
+Verify user information across multiple platforms using username and email lookups.
+
+### Network Analysis
+Analyze IP addresses and domains to understand network infrastructure and potential threats.
+
+### Social Media Intelligence
+Gather information from Discord, Reddit, and other platforms for legitimate research purposes.
+
+<Note>
+Always ensure you have proper authorization and comply with applicable laws when using OSINT tools.
 </Note>

@@ -1,109 +1,102 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "maple",
+  "name": "OsintCat API",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#6366F1",
+    "light": "#A78BFA",
+    "dark": "#4F46E5"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Getting Started",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Introduction",
             "pages": [
               "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "quickstart"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Account",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/user"
+            ]
+          },
+          {
+            "group": "OSINT Lookups",
+            "pages": [
+              "api-reference/endpoint/breach",
+              "api-reference/endpoint/discord",
+              "api-reference/endpoint/roblox",
+              "api-reference/endpoint/reddit",
+              "api-reference/endpoint/discord-to-roblox",
+              "api-reference/endpoint/email-osint",
+              "api-reference/endpoint/phone-osint",
+              "api-reference/endpoint/github-osint",
+              "api-reference/endpoint/username",
+              "api-reference/endpoint/minecraft"
+            ]
+          },
+          {
+            "group": "Network & Domain",
+            "pages": [
+              "api-reference/endpoint/ip",
+              "api-reference/endpoint/dns-resolver",
+              "api-reference/endpoint/domain"
+            ]
+          },
+          {
+            "group": "Public Records",
+            "pages": [
+              "api-reference/endpoint/npd",
+              "api-reference/endpoint/chilean-name"
+            ]
+          },
+          {
+            "group": "Monitoring",
+            "pages": [
+              "api-reference/endpoint/discord-stalker"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/nav-logo.png",
+    "dark": "/images/nav-logo.png"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Dashboard",
+        "href": "https://www.osintcat.net/dashboard"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get API Key",
+      "href": "https://www.osintcat.net/account/settings"
     }
   },
   "contextual": {
     "options": [
      "copy",
-     "view",
      "chatgpt",
      "claude",
      "perplexity",
@@ -113,10 +106,18 @@
    ]
   },
   "footer": {
+    "showMintlify": false,
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/OsintCat",
+      "discord": "https://discord.gg/databreach",
+      "telegram": "https://t.me/osintcatru",
+      "website": "https://www.osintcat.net/"
     }
-  }
+  },
+  "headScripts": [
+    "<style>a[href*=\"mintlify.com\"][href*=\"poweredBy\"],a[href*=\"mintlify.com\"][href*=\"utm_campaign=poweredBy\"],a[href*=\"mintlify.com\"][target=\"_blank\"][rel=\"noreferrer\"].text-sm.text-gray-500,a.text-sm.text-gray-500.dark\\:text-gray-400[href*=\"mintlify.com\"],footer a[href*=\"mintlify.com\"][href*=\"poweredBy\"],footer a[href*=\"mintlify.com\"][target=\"_blank\"]{display:none!important;visibility:hidden!important;opacity:0!important;height:0!important;width:0!important;overflow:hidden!important;position:absolute!important;left:-9999px!important}</style>"
+  ],
+  "bodyScripts": [
+    "<script src=\"/custom.js\"></script>"
+  ]
 }

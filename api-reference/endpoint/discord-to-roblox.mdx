@@ -1,0 +1,207 @@
+---
+title: 'Discord to Roblox'
+api: 'GET /api/discord-to-roblox'
+---
+
+Find a linked Roblox account from a Discord User ID.
+
+## Parameters
+
+<ParamField body="query" type="string" required>
+  The Discord User ID
+</ParamField>
+
+<ParamField body="id" type="string" required>
+  Your API key
+</ParamField>
+
+## Response
+
+Returns linked Roblox account information if found.
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/discord-to-roblox?query=123456789012345678&id=YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/discord-to-roblox"
+params = {
+    "query": "123456789012345678",
+    "id": "YOUR_API_KEY"
+}
+
+response = requests.get(url, params=params)
+
+if response.ok:
+    print(response.json())
+else:
+    print(f"Error: {response.status_code}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/discord-to-roblox?query=123456789012345678&id=YOUR_API_KEY';
+
+fetch(url)
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error('error:' + err));
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+
+$url = "https://www.osintcat.net/api/discord-to-roblox?query=123456789012345678&id=YOUR_API_KEY";
+
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    echo $response;
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/discord-to-roblox"
+    params := url.Values{}
+    params.Add("query", "123456789012345678")
+    params.Add("id", "YOUR_API_KEY")
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Printf("Error reading response: %v\n", err)
+        return
+    }
+    
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    fmt.Printf("%+v\n", result)
+}
+```
+
+```ruby Ruby
+require 'net/http'
+require 'json'
+require 'uri'
+
+uri = URI('https://www.osintcat.net/api/discord-to-roblox')
+params = { query: '123456789012345678', id: 'YOUR_API_KEY' }
+uri.query = URI.encode_www_form(params)
+
+response = Net::HTTP.get_response(uri)
+
+if response.is_a?(Net::HTTPSuccess)
+    data = JSON.parse(response.body)
+    puts JSON.pretty_generate(data)
+else
+    puts "Error: #{response.code}"
+end
+```
+
+```java Java
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class OsintCatAPI {
+    public static void main(String[] args) {
+        try {
+            String apiUrl = "https://www.osintcat.net/api/discord-to-roblox?query=123456789012345678&id=YOUR_API_KEY";
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream())
+                );
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                System.out.println(response.toString());
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```csharp C#
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                string url = "https://www.osintcat.net/api/discord-to-roblox?query=123456789012345678&id=YOUR_API_KEY";
+                var response = await client.GetAsync(url);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(content);
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+}
+```
+</CodeGroup>
+

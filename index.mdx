@@ -1,97 +1,104 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "OsintCat API Documentation"
+description: "Comprehensive API documentation for OsintCat - OSINT and data lookup services"
 ---
 
-## Setting up
+## Welcome to OsintCat API
 
-Get your documentation site up and running in minutes.
+OsintCat provides a powerful REST API for OSINT (Open Source Intelligence) lookups, breach data searches, and public record queries. Integrate comprehensive data lookup capabilities into your applications.
 
 <Card
-  title="Start here"
+  title="Get Started"
   icon="rocket"
   href="/quickstart"
   horizontal
 >
-  Follow our three step quickstart guide.
+  Follow our quickstart guide to get your API key and make your first request.
 </Card>
 
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
+## Quick Links
 
 <Columns cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
+    title="API Reference"
     icon="terminal"
     href="/api-reference/introduction"
   >
-    Auto-generate API documentation from OpenAPI specifications.
+    Browse all available API endpoints and their documentation.
+  </Card>
+  <Card
+    title="Get API Key"
+    icon="key"
+    href="https://www.osintcat.net/account/settings"
+  >
+    Sign up for an account and get your API key to start making requests.
+  </Card>
+  <Card
+    title="Dashboard"
+    icon="chart-line"
+    href="https://www.osintcat.net/dashboard"
+  >
+    View your API usage, manage your account, and monitor your requests.
+  </Card>
+  <Card
+    title="Pricing"
+    icon="tag"
+    href="https://www.osintcat.net/pricing"
+  >
+    View our pricing plans and choose the one that fits your needs.
   </Card>
 </Columns>
 
-## Create beautiful pages
+## Features
 
-Everything you need to create world-class documentation.
+### Comprehensive OSINT Lookups
+- **Breach Data**: Search across multiple breach databases
+- **Social Media**: Lookup Discord, Reddit, Roblox, and more
+- **Email & Phone**: Discover where emails and phone numbers are registered
+- **Username Search**: Find information across multiple platforms
+- **Network Intelligence**: IP and domain lookups with stealer logs
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+### Developer Friendly
+- **RESTful API**: Simple HTTP requests with JSON responses
+- **Multiple Languages**: Code examples in cURL, Python, Node.js, and PHP
+- **Rate Limiting**: Clear rate limits with automatic timeout protection
+- **Comprehensive Docs**: Detailed documentation for every endpoint
 
-## Need inspiration?
+### Reliable & Secure
+- **API Key Authentication**: Secure access with API keys
+- **Error Handling**: Clear error messages and HTTP status codes
+- **Usage Tracking**: Monitor your API usage in real-time
+- **Plan Flexibility**: Choose from Free, Premium, or Enterprise plans
+
+## Popular Endpoints
+
+<CardGroup cols={2}>
+  <Card title="User Info" icon="user" href="/api-reference/endpoint/user">
+    Get account information and usage statistics
+  </Card>
+  <Card title="Breach Lookup" icon="shield-halved" href="/api-reference/endpoint/breach">
+    Search for records in data breaches
+  </Card>
+  <Card title="Email OSINT" icon="envelope" href="/api-reference/endpoint/email-osint">
+    Discover websites an email is registered on
+  </Card>
+  <Card title="Discord Lookup" icon="discord" href="/api-reference/endpoint/discord">
+    Find Discord user information
+  </Card>
+  <Card title="IP Info" icon="network-wired" href="/api-reference/endpoint/ip">
+    Get IP information and stealer logs
+  </Card>
+  <Card title="Username Lookup" icon="at" href="/api-reference/endpoint/username">
+    Find information across multiple platforms
+  </Card>
+</CardGroup>
+
+## Need Help?
 
 <Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
+  title="View API Reference"
+  icon="book"
+  href="/api-reference/introduction"
 >
-  Browse our showcase of exceptional documentation sites.
+  Browse our complete API documentation with examples and detailed parameter descriptions.
 </Card>

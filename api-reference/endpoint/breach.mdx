@@ -1,0 +1,236 @@
+---
+title: 'Breach Lookup'
+api: 'GET /api/breach'
+---
+
+Search for records in data breaches and compilations. This endpoint searches across multiple breach databases to find information associated with your query.
+
+## Parameters
+
+<ParamField body="query" type="string" required>
+  The search term (e.g., email, username)
+</ParamField>
+
+<ParamField body="id" type="string" required>
+  Your API key
+</ParamField>
+
+## Response
+
+Returns breach data found across multiple sources.
+
+<ResponseField name="api" type="string">API identifier</ResponseField>
+<ResponseField name="elapsed_ms" type="number">Request processing time in milliseconds</ResponseField>
+<ResponseField name="timestamp" type="string">Formatted timestamp of the request</ResponseField>
+<ResponseField name="results_count" type="number">Number of breach records found</ResponseField>
+<ResponseField name="breach_data" type="array">Array of breach records</ResponseField>
+<ResponseField name="_meta" type="object">Metadata about the request</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/breach?query=user@example.com&id=YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/breach"
+params = {
+    "query": "user@example.com",
+    "id": "YOUR_API_KEY"
+}
+
+response = requests.get(url, params=params)
+
+if response.ok:
+    print(response.json())
+else:
+    print(f"Error: {response.status_code}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/breach?query=user@example.com&id=YOUR_API_KEY';
+
+fetch(url)
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error('error:' + err));
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+
+$url = "https://www.osintcat.net/api/breach?query=user@example.com&id=YOUR_API_KEY";
+
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    echo $response;
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/breach"
+    params := url.Values{}
+    params.Add("query", "user@example.com")
+    params.Add("id", "YOUR_API_KEY")
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Printf("Error reading response: %v\n", err)
+        return
+    }
+    
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    fmt.Printf("%+v\n", result)
+}
+```
+
+```ruby Ruby
+require 'net/http'
+require 'json'
+require 'uri'
+
+uri = URI('https://www.osintcat.net/api/breach')
+params = { query: 'user@example.com', id: 'YOUR_API_KEY' }
+uri.query = URI.encode_www_form(params)
+
+response = Net::HTTP.get_response(uri)
+
+if response.is_a?(Net::HTTPSuccess)
+    data = JSON.parse(response.body)
+    puts JSON.pretty_generate(data)
+else
+    puts "Error: #{response.code}"
+end
+```
+
+```java Java
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class OsintCatAPI {
+    public static void main(String[] args) {
+        try {
+            String apiUrl = "https://www.osintcat.net/api/breach?query=user@example.com&id=YOUR_API_KEY";
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream())
+                );
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                System.out.println(response.toString());
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```csharp C#
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                string url = "https://www.osintcat.net/api/breach?query=user@example.com&id=YOUR_API_KEY";
+                var response = await client.GetAsync(url);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(content);
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "api": "OsintCat",
+  "elapsed_ms": 1234.56,
+  "timestamp": "Jan 20th 14:30",
+  "results_count": 5,
+  "breach_data": [
+    {
+      "source": "leakcheck",
+      "email": "user@example.com",
+      "password": "hashed_password",
+      "breach_date": "2020-01-15"
+    }
+  ],
+  "_meta": {
+    "requests_remaining": 38
+  }
+}
+```
+

@@ -1,0 +1,45 @@
+/* Hide "Powered by Mintlify" link - Multiple selectors for maximum compatibility */
+a[href*="mintlify.com"][href*="poweredBy"],
+a[href*="mintlify.com"][href*="utm_campaign=poweredBy"],
+a[href*="mintlify.com"][target="_blank"][rel="noreferrer"].text-sm.text-gray-500,
+a.text-sm.text-gray-500.dark\:text-gray-400[href*="mintlify.com"],
+footer a[href*="mintlify.com"][href*="poweredBy"],
+footer a[href*="mintlify.com"][target="_blank"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* OsintCat logo and text styling - match website design */
+/* Apply flex layout to logo links */
+a[href="/"] {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+    text-decoration: none !important;
+}
+
+/* Logo images - set to 36px height to match website */
+a[href="/"] img.nav-logo,
+a[href="/"] img[alt*="logo"] {
+    height: 36px !important;
+    width: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* OsintCat text next to logo - no spacing */
+.osintcat-text {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+

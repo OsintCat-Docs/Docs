@@ -1,0 +1,239 @@
+---
+title: 'Email OSINT'
+api: 'GET /api/email-osint'
+---
+
+Discover which websites an email address is registered on.
+
+<Warning>
+**Purpose Identification Required**: This endpoint requires you to specify the purpose/reason for your OSINT search. You can provide this in 4 different ways (in order of priority):
+1. **Query Parameter**: `?purpose=Your%20Purpose`
+2. **X-Purpose Header**: `X-Purpose: Your Purpose`
+3. **Purpose Header**: `Purpose: Your Purpose`
+4. **User-Agent Header**: Include `Purpose: Your Purpose` within the User-Agent string
+</Warning>
+
+## Parameters
+
+<ParamField body="query" type="string" required>
+  Email address to investigate
+</ParamField>
+
+<ParamField body="purpose" type="string">
+  Purpose/reason for the OSINT search (can also be provided via headers)
+</ParamField>
+
+<ParamField body="id" type="string" required>
+  Your API key
+</ParamField>
+
+## Headers
+
+<ParamField header="X-Purpose" type="string">
+  Alternative way to provide the purpose (takes priority over query parameter)
+</ParamField>
+
+<ParamField header="Purpose" type="string">
+  Alternative way to provide the purpose
+</ParamField>
+
+<ParamField header="User-Agent" type="string">
+  Can include `Purpose: Your Purpose` within the User-Agent string
+</ParamField>
+
+## Response
+
+Returns information about websites where the email address is registered.
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+# Using query parameter
+curl "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research"
+
+# Using header
+curl -H "X-Purpose: Security Research" "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/email-osint"
+params = {
+    "query": "test@example.com",
+    "purpose": "Security Research",
+    "id": "YOUR_API_KEY"
+}
+
+response = requests.get(url, params=params)
+
+if response.ok:
+    print(response.json())
+else:
+    print(f"Error: {response.status_code}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research';
+
+fetch(url)
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error('error:' + err));
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+
+$url = "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research";
+
+curl_setopt($curl, CURLOPT_URL, $url);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    echo $response;
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/email-osint"
+    params := url.Values{}
+    params.Add("query", "test@example.com")
+    params.Add("purpose", "Security Research")
+    params.Add("id", "YOUR_API_KEY")
+    
+    fullURL := baseURL + "?" + params.Encode()
+    
+    resp, err := http.Get(fullURL)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+    
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        fmt.Printf("Error reading response: %v\n", err)
+        return
+    }
+    
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    fmt.Printf("%+v\n", result)
+}
+```
+
+```ruby Ruby
+require 'net/http'
+require 'json'
+require 'uri'
+
+uri = URI('https://www.osintcat.net/api/email-osint')
+params = { query: 'test@example.com', purpose: 'Security Research', id: 'YOUR_API_KEY' }
+uri.query = URI.encode_www_form(params)
+
+response = Net::HTTP.get_response(uri)
+
+if response.is_a?(Net::HTTPSuccess)
+    data = JSON.parse(response.body)
+    puts JSON.pretty_generate(data)
+else
+    puts "Error: #{response.code}"
+end
+```
+
+```java Java
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class OsintCatAPI {
+    public static void main(String[] args) {
+        try {
+            String apiUrl = "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research";
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream())
+                );
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                
+                System.out.println(response.toString());
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```csharp C#
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                string url = "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research";
+                var response = await client.GetAsync(url);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(content);
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+    }
+}
+```
+</CodeGroup>
+
