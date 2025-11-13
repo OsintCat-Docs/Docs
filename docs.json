@@ -8,6 +8,9 @@
     "dark": "#4F46E5"
   },
   "favicon": "/favicon.png",
+  "api": {
+    "baseUrl": "https://www.osintcat.net"
+  },
   "navigation": {
     "tabs": [
       {
