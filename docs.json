@@ -8,9 +8,6 @@
     "dark": "#4F46E5"
   },
   "favicon": "/favicon.png",
-  "api": {
-    "baseUrl": "https://www.osintcat.net"
-  },
   "navigation": {
     "tabs": [
       {
@@ -102,25 +99,15 @@
      "copy",
      "chatgpt",
      "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
+     "perplexity"
    ]
   },
   "footer": {
-    "showMintlify": false,
     "socials": {
       "x": "https://x.com/OsintCat",
       "discord": "https://discord.gg/databreach",
       "telegram": "https://t.me/osintcatru",
       "website": "https://www.osintcat.net/"
     }
-  },
-  "headScripts": [
-    "<style>a[href*=\"mintlify.com\"][href*=\"poweredBy\"],a[href*=\"mintlify.com\"][href*=\"utm_campaign=poweredBy\"],a[href*=\"mintlify.com\"][target=\"_blank\"][rel=\"noreferrer\"].text-sm.text-gray-500,a.text-sm.text-gray-500.dark\\:text-gray-400[href*=\"mintlify.com\"],footer a[href*=\"mintlify.com\"][href*=\"poweredBy\"],footer a[href*=\"mintlify.com\"][target=\"_blank\"]{display:none!important;visibility:hidden!important;opacity:0!important;height:0!important;width:0!important;overflow:hidden!important;position:absolute!important;left:-9999px!important}</style>"
-  ],
-  "bodyScripts": [
-    "<script src=\"/custom.js\"></script>"
-  ]
+  }
 }
