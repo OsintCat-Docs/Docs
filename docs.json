@@ -96,11 +96,12 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "chatgpt",
-     "claude",
-     "perplexity"
-   ]
+      "view",
+      "copy",
+      "chatgpt",
+      "claude",
+      "perplexity"
+    ]
   },
   "footer": {
     "socials": {
@@ -109,5 +110,11 @@
       "telegram": "https://t.me/osintcatru",
       "website": "https://www.osintcat.net/"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/.md",
+      "destination": "/index.md"
+    }
+  ]
 }
