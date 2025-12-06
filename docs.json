@@ -48,8 +48,10 @@
               "api-reference/endpoint/email-osint",
               "api-reference/endpoint/phone-osint",
               "api-reference/endpoint/github-osint",
+              "api-reference/endpoint/github-userinfo",
               "api-reference/endpoint/username",
-              "api-reference/endpoint/minecraft"
+              "api-reference/endpoint/minecraft",
+              "api-reference/endpoint/minecraft-osint"
             ]
           },
           {

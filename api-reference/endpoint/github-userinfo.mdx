@@ -1,18 +1,14 @@
 ---
-title: 'Minecraft Lookup'
-api: 'GET https://www.osintcat.net/api/minecraft'
+title: 'GitHub User Info'
+api: 'GET https://www.osintcat.net/api/github-userinfo'
 ---
 
-Minecraft breach data lookup. Search for Minecraft account information including usernames, IPs, passwords, emails, and UUIDs from breach databases.
+Get GitHub user information and email addresses fetched from commits.
 
 ## Parameters
 
 <ParamField query="query" type="string" required>
-  The search query value
-</ParamField>
-
-<ParamField query="type" type="string" required>
-  The type of search to perform. Available search types: `username`, `ip`, `password`, `email`, `uuid`
+  A GitHub username
 </ParamField>
 
 <ParamField query="id" type="string" required>
@@ -21,22 +17,21 @@ Minecraft breach data lookup. Search for Minecraft account information including
 
 ## Response
 
-Returns Minecraft breach data based on the search type specified. The response structure varies depending on the type parameter used.
+Returns GitHub user information including profile details and email addresses extracted from commit history.
 
 ## Example Request
 
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/minecraft?query=Notch&type=username&id=YOUR_API_KEY"
+curl "https://www.osintcat.net/api/github-userinfo?query=octocat&id=YOUR_API_KEY"
 ```
 
 ```python Python
 import requests
 
-url = "https://www.osintcat.net/api/minecraft"
+url = "https://www.osintcat.net/api/github-userinfo"
 params = {
-    "query": "Notch",
-    "type": "username",
+    "query": "octocat",
     "id": "YOUR_API_KEY"
 }
 
@@ -49,7 +44,7 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/minecraft?query=Notch&type=username&id=YOUR_API_KEY';
+const url = 'https://www.osintcat.net/api/github-userinfo?query=octocat&id=YOUR_API_KEY';
 
 fetch(url)
     .then(res => res.json())
@@ -62,7 +57,7 @@ fetch(url)
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/minecraft?query=Notch&type=username&id=YOUR_API_KEY";
+$url = "https://www.osintcat.net/api/github-userinfo?query=octocat&id=YOUR_API_KEY";
 
 curl_setopt($curl, CURLOPT_URL, $url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -91,10 +86,9 @@ import (
 )
 
 func main() {
-    baseURL := "https://www.osintcat.net/api/minecraft"
+    baseURL := "https://www.osintcat.net/api/github-userinfo"
     params := url.Values{}
-    params.Add("query", "Notch")
-    params.Add("type", "username")
+    params.Add("query", "octocat")
     params.Add("id", "YOUR_API_KEY")
     
     fullURL := baseURL + "?" + params.Encode()
@@ -123,8 +117,8 @@ require 'net/http'
 require 'json'
 require 'uri'
 
-uri = URI('https://www.osintcat.net/api/minecraft')
-params = { query: 'Notch', type: 'username', id: 'YOUR_API_KEY' }
+uri = URI('https://www.osintcat.net/api/github-userinfo')
+params = { query: 'octocat', id: 'YOUR_API_KEY' }
 uri.query = URI.encode_www_form(params)
 
 response = Net::HTTP.get_response(uri)
@@ -146,7 +140,7 @@ import java.io.InputStreamReader;
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/minecraft?query=Notch&type=username&id=YOUR_API_KEY";
+            String apiUrl = "https://www.osintcat.net/api/github-userinfo?query=octocat&id=YOUR_API_KEY";
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -188,7 +182,7 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/minecraft?query=Notch&type=username&id=YOUR_API_KEY";
+                string url = "https://www.osintcat.net/api/github-userinfo?query=octocat&id=YOUR_API_KEY";
                 var response = await client.GetAsync(url);
                 
                 if (response.IsSuccessStatusCode)
