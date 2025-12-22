@@ -1,6 +1,6 @@
 ---
 title: 'Username Lookup'
-api: 'GET https://www.osintcat.net/api/username'
+api: 'GET https://www.osintcat.net/api/user-osint'
 ---
 
 Find stealer logs and site information about a username.
@@ -11,7 +11,9 @@ Find stealer logs and site information about a username.
   A username
 </ParamField>
 
-<ParamField query="id" type="string" required>
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
   Your API key
 </ParamField>
 
@@ -31,19 +33,18 @@ Returns information from multiple sources including TikTok, Twitter, Instagram, 
 
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/username?query=example_username&id=YOUR_API_KEY"
+curl "https://www.osintcat.net/api/user-osint?query=example_username" \
+     -H "x-api-key: YOUR_API_KEY"
 ```
 
 ```python Python
 import requests
 
-url = "https://www.osintcat.net/api/username"
-params = {
-    "query": "example_username",
-    "id": "YOUR_API_KEY"
-}
+url = "https://www.osintcat.net/api/user-osint"
+params = {"query": "example_username"}
+headers = {"x-api-key": "YOUR_API_KEY"}
 
-response = requests.get(url, params=params)
+response = requests.get(url, params=params, headers=headers)
 
 if response.ok:
     print(response.json())
@@ -52,9 +53,13 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/username?query=example_username&id=YOUR_API_KEY';
+const url = 'https://www.osintcat.net/api/user-osint?query=example_username';
 
-fetch(url)
+fetch(url, {
+    headers: {
+        'x-api-key': 'YOUR_API_KEY'
+    }
+})
     .then(res => res.json())
     .then(json => console.log(json))
     .catch(err => console.error('error:' + err));
@@ -65,10 +70,15 @@ fetch(url)
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/username?query=example_username&id=YOUR_API_KEY";
+$url = "https://www.osintcat.net/api/user-osint?query=example_username";
 
-curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt_array($curl, [
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        "x-api-key: YOUR_API_KEY"
+    ],
+]);
 
 $response = curl_exec($curl);
 $err = curl_error($curl);
@@ -94,26 +104,24 @@ import (
 )
 
 func main() {
-    baseURL := "https://www.osintcat.net/api/username"
+    baseURL := "https://www.osintcat.net/api/user-osint"
     params := url.Values{}
     params.Add("query", "example_username")
-    params.Add("id", "YOUR_API_KEY")
     
     fullURL := baseURL + "?" + params.Encode()
     
-    resp, err := http.Get(fullURL)
+    req, _ := http.NewRequest("GET", fullURL, nil)
+    req.Header.Set("x-api-key", "YOUR_API_KEY")
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
     if err != nil {
         fmt.Printf("Error: %v\n", err)
         return
     }
     defer resp.Body.Close()
     
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        fmt.Printf("Error reading response: %v\n", err)
-        return
-    }
-    
+    body, _ := io.ReadAll(resp.Body)
     var result map[string]interface{}
     json.Unmarshal(body, &result)
     fmt.Printf("%+v\n", result)
@@ -125,15 +133,18 @@ require 'net/http'
 require 'json'
 require 'uri'
 
-uri = URI('https://www.osintcat.net/api/username')
-params = { query: 'example_username', id: 'YOUR_API_KEY' }
-uri.query = URI.encode_www_form(params)
+uri = URI('https://www.osintcat.net/api/user-osint')
+uri.query = URI.encode_www_form({ query: 'example_username' })
 
-response = Net::HTTP.get_response(uri)
+request = Net::HTTP::Get.new(uri)
+request['x-api-key'] = 'YOUR_API_KEY'
+
+response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+end
 
 if response.is_a?(Net::HTTPSuccess)
-    data = JSON.parse(response.body)
-    puts JSON.pretty_generate(data)
+    puts JSON.pretty_generate(JSON.parse(response.body))
 else
     puts "Error: #{response.code}"
 end
@@ -148,24 +159,21 @@ import java.io.InputStreamReader;
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/username?query=example_username&id=YOUR_API_KEY";
+            String apiUrl = "https://www.osintcat.net/api/user-osint?query=example_username";
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            conn.setRequestProperty("x-api-key", "YOUR_API_KEY");
             
             int responseCode = conn.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
-                );
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
-                
+                StringBuilder response = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();
-                
                 System.out.println(response.toString());
             } else {
                 System.out.println("Error: " + responseCode);
@@ -190,7 +198,9 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/username?query=example_username&id=YOUR_API_KEY";
+                string url = "https://www.osintcat.net/api/user-osint?query=example_username";
+                client.DefaultRequestHeaders.Add("x-api-key", "YOUR_API_KEY");
+                
                 var response = await client.GetAsync(url);
                 
                 if (response.IsSuccessStatusCode)
@@ -212,4 +222,3 @@ class Program
 }
 ```
 </CodeGroup>
-

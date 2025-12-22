@@ -1,82 +1,42 @@
 ---
-title: 'Public Data (NPD)'
-api: 'GET https://www.osintcat.net/api/npd'
+title: 'Database Search'
+api: 'GET https://www.osintcat.net/api/database-search'
 ---
 
-Search National Public Data records using a variety of criteria. At least one search parameter (besides API key) is required.
-
-<Warning>
-**Legal Notice**: Public records searches must comply with all applicable laws and regulations. Ensure you have proper authorization before accessing personal information.
-</Warning>
+Search through global breach databases for specific records including emails, usernames, and other leaked information.
 
 ## Parameters
 
-<ParamField query="first_name" type="string">
-  First name
+<ParamField query="query" type="string" required>
+  The search term (e.g., email, username, or keyword)
 </ParamField>
 
-<ParamField query="middle_name" type="string">
-  Middle name
-</ParamField>
+## Headers
 
-<ParamField query="last_name" type="string">
-  Last name
-</ParamField>
-
-<ParamField query="dob" type="string">
-  Date of birth (e.g., YYYY-MM-DD)
-</ParamField>
-
-<ParamField query="phone" type="string">
-  Phone number
-</ParamField>
-
-<ParamField query="address" type="string">
-  Street address
-</ParamField>
-
-<ParamField query="city" type="string">
-  City
-</ParamField>
-
-<ParamField query="zip_code" type="string">
-  ZIP or postal code
-</ParamField>
-
-<ParamField query="ssn" type="string">
-  Social Security Number
-</ParamField>
-
-<ParamField query="id" type="string" required>
+<ParamField header="x-api-key" type="string" required>
   Your API key
 </ParamField>
 
-<Note>
-At least one search parameter (besides the API key) must be provided. You can combine multiple parameters for more precise searches.
-</Note>
-
 ## Response
 
-Returns public records matching the search criteria.
+Returns matching records found in the database collection.
 
 ## Example Request
 
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&id=YOUR_API_KEY"
+curl "https://www.osintcat.net/api/database-search?query=example_user" \
+     -H "x-api-key: YOUR_API_KEY"
 ```
 
 ```python Python
 import requests
 
-url = "https://www.osintcat.net/api/npd"
-params = {
-    "first_name": "John",
-    "last_name": "Doe",
-    "id": "YOUR_API_KEY"
-}
+url = "https://www.osintcat.net/api/database-search"
+params = {"query": "example_user"}
+headers = {"x-api-key": "YOUR_API_KEY"}
 
-response = requests.get(url, params=params)
+response = requests.get(url, params=params, headers=headers)
 
 if response.ok:
     print(response.json())
@@ -85,9 +45,13 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&id=YOUR_API_KEY';
+const url = 'https://www.osintcat.net/api/database-search?query=example_user';
 
-fetch(url)
+fetch(url, {
+    headers: {
+        'x-api-key': 'YOUR_API_KEY'
+    }
+})
     .then(res => res.json())
     .then(json => console.log(json))
     .catch(err => console.error('error:' + err));
@@ -98,10 +62,15 @@ fetch(url)
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&id=YOUR_API_KEY";
+$url = "https://www.osintcat.net/api/database-search?query=example_user";
 
-curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt_array($curl, [
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        "x-api-key: YOUR_API_KEY"
+    ],
+]);
 
 $response = curl_exec($curl);
 $err = curl_error($curl);
@@ -127,27 +96,24 @@ import (
 )
 
 func main() {
-    baseURL := "https://www.osintcat.net/api/npd"
+    baseURL := "https://www.osintcat.net/api/database-search"
     params := url.Values{}
-    params.Add("first_name", "John")
-    params.Add("last_name", "Doe")
-    params.Add("id", "YOUR_API_KEY")
+    params.Add("query", "example_user")
     
     fullURL := baseURL + "?" + params.Encode()
     
-    resp, err := http.Get(fullURL)
+    req, _ := http.NewRequest("GET", fullURL, nil)
+    req.Header.Set("x-api-key", "YOUR_API_KEY")
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
     if err != nil {
         fmt.Printf("Error: %v\n", err)
         return
     }
     defer resp.Body.Close()
     
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        fmt.Printf("Error reading response: %v\n", err)
-        return
-    }
-    
+    body, _ := io.ReadAll(resp.Body)
     var result map[string]interface{}
     json.Unmarshal(body, &result)
     fmt.Printf("%+v\n", result)
@@ -159,11 +125,15 @@ require 'net/http'
 require 'json'
 require 'uri'
 
-uri = URI('https://www.osintcat.net/api/npd')
-params = { first_name: 'John', last_name: 'Doe', id: 'YOUR_API_KEY' }
-uri.query = URI.encode_www_form(params)
+uri = URI('https://www.osintcat.net/api/database-search')
+uri.query = URI.encode_www_form({ query: 'example_user' })
 
-response = Net::HTTP.get_response(uri)
+request = Net::HTTP::Get.new(uri)
+request['x-api-key'] = 'YOUR_API_KEY'
+
+response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+end
 
 if response.is_a?(Net::HTTPSuccess)
     data = JSON.parse(response.body)
@@ -182,24 +152,21 @@ import java.io.InputStreamReader;
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&id=YOUR_API_KEY";
+            String apiUrl = "https://www.osintcat.net/api/database-search?query=example_user";
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            conn.setRequestProperty("x-api-key", "YOUR_API_KEY");
             
             int responseCode = conn.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
-                );
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
-                
+                StringBuilder response = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();
-                
                 System.out.println(response.toString());
             } else {
                 System.out.println("Error: " + responseCode);
@@ -224,7 +191,9 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&id=YOUR_API_KEY";
+                string url = "https://www.osintcat.net/api/database-search?query=example_user";
+                client.DefaultRequestHeaders.Add("x-api-key", "YOUR_API_KEY");
+                
                 var response = await client.GetAsync(url);
                 
                 if (response.IsSuccessStatusCode)
@@ -246,4 +215,3 @@ class Program
 }
 ```
 </CodeGroup>
-

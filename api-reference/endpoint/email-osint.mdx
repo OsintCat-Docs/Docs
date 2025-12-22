@@ -23,11 +23,11 @@ Discover which websites an email address is registered on.
   Purpose/reason for the OSINT search (can also be provided via headers)
 </ParamField>
 
-<ParamField query="id" type="string" required>
+## Headers
+
+<ParamField header="x-api-key" type="string" required>
   Your API key
 </ParamField>
-
-## Headers
 
 <ParamField header="X-Purpose" type="string">
   Alternative way to provide the purpose (takes priority over query parameter)
@@ -49,11 +49,10 @@ Returns information about websites where the email address is registered.
 
 <CodeGroup>
 ```bash cURL
-# Using query parameter
-curl "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research"
-
-# Using header
-curl -H "X-Purpose: Security Research" "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY"
+# Using header for API Key and X-Purpose for reason
+curl "https://www.osintcat.net/api/email-osint?query=test@example.com" \
+     -H "x-api-key: YOUR_API_KEY" \
+     -H "X-Purpose: Security Research"
 ```
 
 ```python Python
@@ -62,11 +61,13 @@ import requests
 url = "https://www.osintcat.net/api/email-osint"
 params = {
     "query": "test@example.com",
-    "purpose": "Security Research",
-    "id": "YOUR_API_KEY"
+    "purpose": "Security Research"
+}
+headers = {
+    "x-api-key": "YOUR_API_KEY"
 }
 
-response = requests.get(url, params=params)
+response = requests.get(url, params=params, headers=headers)
 
 if response.ok:
     print(response.json())
@@ -75,9 +76,13 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research';
+const url = 'https://www.osintcat.net/api/email-osint?query=test@example.com&purpose=Security%20Research';
 
-fetch(url)
+fetch(url, {
+    headers: {
+        'x-api-key': 'YOUR_API_KEY'
+    }
+})
     .then(res => res.json())
     .then(json => console.log(json))
     .catch(err => console.error('error:' + err));
@@ -88,10 +93,15 @@ fetch(url)
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research";
+$url = "https://www.osintcat.net/api/email-osint?query=test@example.com&purpose=Security%20Research";
 
-curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt_array($curl, [
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        "x-api-key: YOUR_API_KEY"
+    ],
+]);
 
 $response = curl_exec($curl);
 $err = curl_error($curl);
@@ -121,23 +131,21 @@ func main() {
     params := url.Values{}
     params.Add("query", "test@example.com")
     params.Add("purpose", "Security Research")
-    params.Add("id", "YOUR_API_KEY")
     
     fullURL := baseURL + "?" + params.Encode()
     
-    resp, err := http.Get(fullURL)
+    req, _ := http.NewRequest("GET", fullURL, nil)
+    req.Header.Set("x-api-key", "YOUR_API_KEY")
+    
+    client := &http.Client{}
+    resp, err := client.Do(req)
     if err != nil {
         fmt.Printf("Error: %v\n", err)
         return
     }
     defer resp.Body.Close()
     
-    body, err := io.ReadAll(resp.Body)
-    if err != nil {
-        fmt.Printf("Error reading response: %v\n", err)
-        return
-    }
-    
+    body, _ := io.ReadAll(resp.Body)
     var result map[string]interface{}
     json.Unmarshal(body, &result)
     fmt.Printf("%+v\n", result)
@@ -150,10 +158,17 @@ require 'json'
 require 'uri'
 
 uri = URI('https://www.osintcat.net/api/email-osint')
-params = { query: 'test@example.com', purpose: 'Security Research', id: 'YOUR_API_KEY' }
-uri.query = URI.encode_www_form(params)
+uri.query = URI.encode_www_form({ 
+    query: 'test@example.com', 
+    purpose: 'Security Research' 
+})
 
-response = Net::HTTP.get_response(uri)
+request = Net::HTTP::Get.new(uri)
+request['x-api-key'] = 'YOUR_API_KEY'
+
+response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+end
 
 if response.is_a?(Net::HTTPSuccess)
     data = JSON.parse(response.body)
@@ -172,24 +187,21 @@ import java.io.InputStreamReader;
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research";
+            String apiUrl = "https://www.osintcat.net/api/email-osint?query=test@example.com&purpose=Security%20Research";
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            conn.setRequestProperty("x-api-key", "YOUR_API_KEY");
             
             int responseCode = conn.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream())
-                );
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
-                
+                StringBuilder response = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();
-                
                 System.out.println(response.toString());
             } else {
                 System.out.println("Error: " + responseCode);
@@ -214,7 +226,9 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/email-osint?query=test@example.com&id=YOUR_API_KEY&purpose=Security%20Research";
+                string url = "https://www.osintcat.net/api/email-osint?query=test@example.com&purpose=Security%20Research";
+                client.DefaultRequestHeaders.Add("x-api-key", "YOUR_API_KEY");
+                
                 var response = await client.GetAsync(url);
                 
                 if (response.IsSuccessStatusCode)
@@ -236,4 +250,3 @@ class Program
 }
 ```
 </CodeGroup>
-

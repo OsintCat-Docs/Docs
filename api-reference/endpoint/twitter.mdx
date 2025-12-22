@@ -1,14 +1,14 @@
 ---
-title: 'Domain Lookup'
-api: 'GET https://www.osintcat.net/api/domain'
+title: 'Twitter OSINT'
+api: 'GET https://www.osintcat.net/api/twitter-osint'
 ---
 
-Domain stealer lookup. Search for domain-related information in stealer logs and databases.
+Get detailed profile information and statistics about a Twitter (X) user.
 
 ## Parameters
 
 <ParamField query="query" type="string" required>
-  Domain name (example -> example.com)
+  Twitter username/handle (without the @)
 </ParamField>
 
 ## Headers
@@ -19,21 +19,21 @@ Domain stealer lookup. Search for domain-related information in stealer logs and
 
 ## Response
 
-Returns domain-related information found in stealer logs and databases.
+Returns detailed Twitter profile data including follower counts, creation date, verified status, and profile metadata.
 
 ## Example Request
 
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/domain?query=example.com" \
+curl "https://www.osintcat.net/api/twitter-osint?query=elonmusk" \
      -H "x-api-key: YOUR_API_KEY"
 ```
 
 ```python Python
 import requests
 
-url = "https://www.osintcat.net/api/domain"
-params = {"query": "example.com"}
+url = "https://www.osintcat.net/api/twitter-osint"
+params = {"query": "elonmusk"}
 headers = {"x-api-key": "YOUR_API_KEY"}
 
 response = requests.get(url, params=params, headers=headers)
@@ -45,7 +45,7 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/domain?query=example.com';
+const url = 'https://www.osintcat.net/api/twitter-osint?query=elonmusk';
 
 fetch(url, {
     headers: {
@@ -62,7 +62,7 @@ fetch(url, {
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/domain?query=example.com";
+$url = "https://www.osintcat.net/api/twitter-osint?query=elonmusk";
 
 curl_setopt_array($curl, [
     CURLOPT_URL => $url,
@@ -96,9 +96,9 @@ import (
 )
 
 func main() {
-    baseURL := "https://www.osintcat.net/api/domain"
+    baseURL := "https://www.osintcat.net/api/twitter-osint"
     params := url.Values{}
-    params.Add("query", "example.com")
+    params.Add("query", "elonmusk")
     
     fullURL := baseURL + "?" + params.Encode()
     
@@ -125,8 +125,8 @@ require 'net/http'
 require 'json'
 require 'uri'
 
-uri = URI('https://www.osintcat.net/api/domain')
-uri.query = URI.encode_www_form({ query: 'example.com' })
+uri = URI('https://www.osintcat.net/api/twitter-osint')
+uri.query = URI.encode_www_form({ query: 'elonmusk' })
 
 request = Net::HTTP::Get.new(uri)
 request['x-api-key'] = 'YOUR_API_KEY'
@@ -152,7 +152,7 @@ import java.io.InputStreamReader;
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/domain?query=example.com";
+            String apiUrl = "https://www.osintcat.net/api/twitter-osint?query=elonmusk";
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -191,7 +191,7 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/domain?query=example.com";
+                string url = "https://www.osintcat.net/api/twitter-osint?query=elonmusk";
                 client.DefaultRequestHeaders.Add("x-api-key", "YOUR_API_KEY");
                 
                 var response = await client.GetAsync(url);
