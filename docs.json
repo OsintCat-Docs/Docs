@@ -68,7 +68,6 @@
           {
             "group": "Public Records",
             "pages": [
-              "api-reference/endpoint/npd",
               "api-reference/endpoint/chilean-name"
             ]
           },
