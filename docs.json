@@ -51,7 +51,10 @@
               "api-reference/endpoint/github-userinfo",
               "api-reference/endpoint/username",
               "api-reference/endpoint/minecraft",
-              "api-reference/endpoint/minecraft-osint"
+              "api-reference/endpoint/minecraft-osint",
+              "api-reference/endpoint/twitter-osint",
+              "api-reference/endpoint/user-osint",
+              "api-reference/endpoint/database-search"
             ]
           },
           {
