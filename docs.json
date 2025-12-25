@@ -94,7 +94,7 @@
     "primary": {
       "type": "button",
       "label": "Get API Key",
-      "href": "https://www.osintcat.net/account/settings"
+      "href": "https://www.osintcat.net/account?tab=api"
     }
   },
   "contextual": {

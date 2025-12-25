@@ -32,16 +32,16 @@ Test the API by checking your account information:
 
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/user?id=YOUR_API_KEY"
+curl "https://www.osintcat.net/api/user" -H "X-API-KEY: YOUR_API_KEY"
 ```
 
 ```python Python
 import requests
 
 url = "https://www.osintcat.net/api/user"
-params = {"id": "YOUR_API_KEY"}
+headers = {"X-API-KEY": "YOUR_API_KEY"}
 
-response = requests.get(url, params=params)
+response = requests.get(url, headers=headers)
 
 if response.ok:
     data = response.json()
@@ -52,9 +52,13 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/user?id=YOUR_API_KEY';
+const url = 'https://www.osintcat.net/api/user';
 
-fetch(url)
+fetch(url, {
+    headers: {
+        'X-API-KEY': 'YOUR_API_KEY'
+    }
+})
     .then(res => res.json())
     .then(data => {
         console.log(`Plan: ${data.account_info.plan}`);
@@ -68,10 +72,13 @@ fetch(url)
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/user?id=YOUR_API_KEY";
+$url = "https://www.osintcat.net/api/user";
 
 curl_setopt($curl, CURLOPT_URL, $url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    'X-API-KEY: YOUR_API_KEY'
+));
 
 $response = curl_exec($curl);
 $err = curl_error($curl);
@@ -95,36 +102,40 @@ import (
     "fmt"
     "io"
     "net/http"
-    "net/url"
 )
 
 func main() {
-    baseURL := "https://www.osintcat.net/api/user"
-    params := url.Values{}
-    params.Add("id", "YOUR_API_KEY")
-    
-    fullURL := baseURL + "?" + params.Encode()
-    
-    resp, err := http.Get(fullURL)
+    url := "https://www.osintcat.net/api/user"
+
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        fmt.Printf("Error creating request: %v\n", err)
+        return
+    }
+
+    req.Header.Add("X-API-KEY", "YOUR_API_KEY")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
     if err != nil {
         fmt.Printf("Error: %v\n", err)
         return
     }
     defer resp.Body.Close()
-    
+
     body, err := io.ReadAll(resp.Body)
     if err != nil {
         fmt.Printf("Error reading response: %v\n", err)
         return
     }
-    
+
     var result map[string]interface{}
     json.Unmarshal(body, &result)
-    
+
     accountInfo := result["account_info"].(map[string]interface{})
     usage := result["usage"].(map[string]interface{})
     apiUsage := usage["api"].(map[string]interface{})
-    
+
     fmt.Printf("Plan: %v\n", accountInfo["plan"])
     fmt.Printf("API Requests Remaining: %v\n", apiUsage["requests_remaining_today"])
 }
@@ -136,10 +147,13 @@ require 'json'
 require 'uri'
 
 uri = URI('https://www.osintcat.net/api/user')
-params = { id: 'YOUR_API_KEY' }
-uri.query = URI.encode_www_form(params)
 
-response = Net::HTTP.get_response(uri)
+request = Net::HTTP::Get.new(uri)
+request['X-API-KEY'] = 'YOUR_API_KEY'
+
+response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+end
 
 if response.is_a?(Net::HTTPSuccess)
     data = JSON.parse(response.body)
@@ -160,11 +174,12 @@ import org.json.JSONObject;
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/user?id=YOUR_API_KEY";
+            String apiUrl = "https://www.osintcat.net/api/user";
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            
+            conn.setRequestProperty("X-API-KEY", "YOUR_API_KEY");
+
             int responseCode = conn.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(
@@ -172,17 +187,17 @@ public class OsintCatAPI {
                 );
                 String inputLine;
                 StringBuffer response = new StringBuffer();
-                
+
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();
-                
+
                 JSONObject json = new JSONObject(response.toString());
                 JSONObject accountInfo = json.getJSONObject("account_info");
                 JSONObject usage = json.getJSONObject("usage");
                 JSONObject apiUsage = usage.getJSONObject("api");
-                
+
                 System.out.println("Plan: " + accountInfo.getString("plan"));
                 System.out.println("API Requests Remaining: " + apiUsage.get("requests_remaining_today"));
             } else {
@@ -209,15 +224,17 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/user?id=YOUR_API_KEY";
+                string url = "https://www.osintcat.net/api/user";
+                client.DefaultRequestHeaders.Add("X-API-KEY", "YOUR_API_KEY");
+
                 var response = await client.GetAsync(url);
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     var json = JsonDocument.Parse(content);
                     var root = json.RootElement;
-                    
+
                     Console.WriteLine($"Plan: {root.GetProperty("account_info").GetProperty("plan").GetString()}");
                     Console.WriteLine($"API Requests Remaining: {root.GetProperty("usage").GetProperty("api").GetProperty("requests_remaining_today")}");
                 }
