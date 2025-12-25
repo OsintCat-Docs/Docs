@@ -7,7 +7,7 @@ Retrieve information and usage statistics about your own account.
 
 ## Headers
 
-<ParamField header="x-api-key" type="string" required>
+<ParamField header="X-API-KEY" type="string" required>
   Your API key
 </ParamField>
 
@@ -48,14 +48,14 @@ Returns account information including username, email, plan, and usage statistic
 <CodeGroup>
 ```bash cURL
 curl "https://www.osintcat.net/api/user" \
-     -H "x-api-key: YOUR_API_KEY"
+     -H "X-API-KEY: YOUR_API_KEY"
 ```
 
 ```python Python
 import requests
 
 url = "https://www.osintcat.net/api/user"
-headers = {"x-api-key": "YOUR_API_KEY"}
+headers = {"X-API-KEY": "YOUR_API_KEY"}
 
 response = requests.get(url, headers=headers)
 
@@ -70,7 +70,7 @@ const url = 'https://www.osintcat.net/api/user';
 
 fetch(url, {
     headers: {
-        'x-api-key': 'YOUR_API_KEY'
+        'X-API-KEY': 'YOUR_API_KEY'
     }
 })
     .then(res => res.json())
@@ -89,7 +89,7 @@ curl_setopt_array($curl, [
     CURLOPT_URL => $url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
-        "x-api-key: YOUR_API_KEY"
+        "X-API-KEY: YOUR_API_KEY"
     ],
 ]);
 
@@ -119,7 +119,7 @@ func main() {
     fullURL := "https://www.osintcat.net/api/user"
     
     req, _ := http.NewRequest("GET", fullURL, nil)
-    req.Header.Set("x-api-key", "YOUR_API_KEY")
+    req.Header.Set("X-API-KEY", "YOUR_API_KEY")
     
     client := &http.Client{}
     resp, err := client.Do(req)
@@ -144,7 +144,7 @@ require 'uri'
 uri = URI('https://www.osintcat.net/api/user')
 
 request = Net::HTTP::Get.new(uri)
-request['x-api-key'] = 'YOUR_API_KEY'
+request['X-API-KEY'] = 'YOUR_API_KEY'
 
 response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
     http.request(request)
@@ -171,7 +171,7 @@ public class OsintCatAPI {
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("x-api-key", "YOUR_API_KEY");
+            conn.setRequestProperty("X-API-KEY", "YOUR_API_KEY");
             
             int responseCode = conn.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -207,7 +207,7 @@ class Program
             try
             {
                 string url = "https://www.osintcat.net/api/user";
-                client.DefaultRequestHeaders.Add("x-api-key", "YOUR_API_KEY");
+                client.DefaultRequestHeaders.Add("X-API-KEY", "YOUR_API_KEY");
                 
                 var response = await client.GetAsync(url);
                 
