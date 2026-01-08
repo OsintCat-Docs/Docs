@@ -3,7 +3,7 @@ title: 'User Info'
 api: 'GET https://www.osintcat.net/api/user'
 ---
 
-Retrieve information and usage statistics about your own account.
+Retrieve information and usage statistics about your own account, including email OSINT credit information.
 
 ## Headers
 
@@ -13,34 +13,30 @@ Retrieve information and usage statistics about your own account.
 
 ## Response
 
-Returns account information including username, email, plan, and usage statistics.
+Returns account information including username, email, plan, usage statistics, and email OSINT credit information.
 
 <ResponseField name="account_info" type="object">
   Account information object
   <ResponseField name="username" type="string">Your username</ResponseField>
   <ResponseField name="email" type="string">Your email address</ResponseField>
-  <ResponseField name="plan" type="string">Your current plan (Free, Premium, or Enterprise)</ResponseField>
-  <ResponseField name="member_since" type="string">Account creation date</ResponseField>
+  <ResponseField name="plan" type="string">Your current plan (Free, Starter, Researcher, Investigator, or Enterprise)</ResponseField>
 </ResponseField>
 
 <ResponseField name="usage" type="object">
   Usage statistics object
-  <ResponseField name="dashboard" type="object">
-    Dashboard usage information
-    <ResponseField name="request_limit_daily" type="string|number">Daily request limit for dashboard</ResponseField>
-    <ResponseField name="requests_remaining_today" type="string|number">Remaining dashboard requests today</ResponseField>
-  </ResponseField>
-  <ResponseField name="api" type="object">
-    API usage information
-    <ResponseField name="request_limit_daily" type="string|number">Daily request limit for API</ResponseField>
-    <ResponseField name="requests_made_today" type="string|number">API requests made today</ResponseField>
-    <ResponseField name="requests_remaining_today" type="string|number">Remaining API requests today</ResponseField>
-  </ResponseField>
-  <ResponseField name="last_limit_reset" type="string">Timestamp of last limit reset (UTC)</ResponseField>
+  <ResponseField name="request_limit_daily" type="number">Daily request limit</ResponseField>
+  <ResponseField name="requests_remaining_today" type="number">Remaining requests today</ResponseField>
+  <ResponseField name="api_access" type="boolean">Whether API access is enabled</ResponseField>
+  <ResponseField name="intelx_access" type="boolean">Whether IntelX access is enabled</ResponseField>
+  <ResponseField name="max_ips" type="number">Maximum number of IP addresses allowed</ResponseField>
 </ResponseField>
 
-<ResponseField name="note" type="string">
-  Information about when limits reset
+<ResponseField name="email_osint_credits" type="object">
+  Email OSINT credit information
+  <ResponseField name="current_balance" type="number">Current credit balance in EUR (2 decimal places)</ResponseField>
+  <ResponseField name="price_per_search" type="number">Cost per search based on your plan in EUR (2 decimal places)</ResponseField>
+  <ResponseField name="has_sufficient_credits" type="boolean">Whether you have enough credits for at least one search</ResponseField>
+  <ResponseField name="searches_available" type="number">Estimated number of searches available with current balance (integer)</ResponseField>
 </ResponseField>
 
 ## Example Request
@@ -236,23 +232,22 @@ class Program
 ```json
 {
   "account_info": {
-    "username": "example_user",
+    "username": "user123",
     "email": "user@example.com",
-    "plan": "Premium",
-    "member_since": "2024-01-15 10:30:00"
+    "plan": "Starter"
   },
   "usage": {
-    "dashboard": {
-      "request_limit_daily": "unlimited",
-      "requests_remaining_today": "unlimited"
-    },
-    "api": {
-      "request_limit_daily": 50,
-      "requests_made_today": 12,
-      "requests_remaining_today": 38
-    },
-    "last_limit_reset": "2024-01-20 00:00:00 UTC"
+    "request_limit_daily": 100,
+    "requests_remaining_today": 85,
+    "api_access": true,
+    "intelx_access": false,
+    "max_ips": 3
   },
-  "note": "API and Dashboard limits reset daily at midnight (UTC)."
+  "email_osint_credits": {
+    "current_balance": 10.50,
+    "price_per_search": 0.40,
+    "has_sufficient_credits": true,
+    "searches_available": 26
+  }
 }
 ```

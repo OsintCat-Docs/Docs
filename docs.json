@@ -47,6 +47,7 @@
               "api-reference/endpoint/discord-to-roblox",
               
               "api-reference/endpoint/phone-osint",
+              "api-reference/endpoint/email-osint",
               "api-reference/endpoint/github-osint",
               "api-reference/endpoint/github-userinfo",
               "api-reference/endpoint/minecraft",

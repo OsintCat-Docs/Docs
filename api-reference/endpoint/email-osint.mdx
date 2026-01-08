@@ -13,6 +13,10 @@ Discover which websites an email address is registered on.
 4. **User-Agent Header**: Include `Purpose: Your Purpose` within the User-Agent string
 </Warning>
 
+<Warning>
+**Credits Required**: This endpoint requires email OSINT credits to perform searches. Credits are deducted only after a successful search. Check your credit balance using the `/api/user` endpoint, which includes email OSINT credit information in its response.
+</Warning>
+
 ## Parameters
 
 <ParamField query="query" type="string" required>
@@ -41,9 +45,70 @@ Discover which websites an email address is registered on.
   Can include `Purpose: Your Purpose` within the User-Agent string
 </ParamField>
 
+## Credit System
+
+Email OSINT searches require credits to be performed. The cost per search varies by your subscription plan:
+
+| Plan | Price per Search | Monthly Free Credits |
+|------|-----------------|---------------------|
+| Free | €0.50 | 5 searches (€2.50) |
+| Starter | €0.40 | 10 searches (€4.00) |
+| Researcher | €0.30 | 20 searches (€6.00) |
+| Investigator | €0.20 | 30 searches (€6.00) |
+| Enterprise | €0.15 | 50 searches (€7.50) |
+
+<Note>
+**Monthly Credits**: Free credits are automatically awarded on the first of each month based on your plan. Free credits are not stackable - unused credits from previous months do not accumulate.
+</Note>
+
+<Note>
+**Credit Deduction**: Credits are deducted only after a successful API response. Failed requests (due to invalid parameters, rate limits, etc.) do not consume credits.
+</Note>
+
+## Check Credit Balance
+
+Before making a search request, you can check your current credit balance using the `/api/user` endpoint, which includes email OSINT credit information:
+
+**Endpoint**: `GET /api/user`
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/user" \
+     -H "X-API-KEY: YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/user"
+headers = {
+    "X-API-KEY": "YOUR_API_KEY"
+}
+
+response = requests.get(url, headers=headers)
+
+if response.ok:
+    data = response.json()
+    credits = data.get('email_osint_credits', {})
+    print(f"Current credits: €{credits.get('current_balance', 0)}")
+    print(f"Price per search: €{credits.get('price_per_search', 0)}")
+    print(f"Searches available: {credits.get('searches_available', 0)}")
+else:
+    print(f"Error: {response.status_code}")
+```
+</CodeGroup>
+
+The `email_osint_credits` object in the response contains:
+- `current_balance`: Current credit balance in EUR
+- `price_per_search`: Cost per search based on your plan
+- `has_sufficient_credits`: Whether you have enough credits for at least one search
+- `searches_available`: Estimated number of searches available with current balance
+
+See the [User Info](/api-reference/endpoint/user) endpoint documentation for the complete response structure.
+
 ## Response
 
-Returns information about websites where the email address is registered.
+Returns information about websites where the email address is registered. Credits are deducted after a successful response.
 
 ## Example Request
 
@@ -250,3 +315,30 @@ class Program
 }
 ```
 </CodeGroup>
+
+## Error Responses
+
+### Insufficient Credits (402 Payment Required)
+
+If you don't have enough credits to perform a search, you'll receive a 402 status code:
+
+```json
+{
+  "error": "INSUFFICIENT_CREDITS",
+  "message": "Insufficient credits. You need 0.50€ but have 0.00€. Please purchase credits.",
+  "credits_needed": 0.50,
+  "credits_available": 0.00
+}
+```
+
+### Rate Limit Exceeded (429 Too Many Requests)
+
+If you exceed the rate limit of 3 requests per second, you'll receive a 429 status code. This does not consume credits.
+
+### Other Status Codes
+
+- `200 OK` - Success (credits are deducted)
+- `400 Bad Request` - Missing or invalid parameters (no credits deducted)
+- `403 Forbidden` - Invalid or missing API key (no credits deducted)
+- `429 Too Many Requests` - Rate limit exceeded (no credits deducted)
+- `500 Internal Server Error` - Server error (no credits deducted)
