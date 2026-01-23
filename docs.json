@@ -72,6 +72,12 @@
             ]
           },
           {
+            "group": "Vehicle",
+            "pages": [
+              "api-reference/endpoint/vin"
+            ]
+          },
+          {
             "group": "Monitoring",
             "pages": [
               "api-reference/endpoint/discord-stalker"
