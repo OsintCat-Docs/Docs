@@ -13,10 +13,66 @@ Decode Vehicle Identification Numbers (VINs) and query vehicle data from the NHT
 
 ## Parameters
 
-All requests require a `type` parameter. Other parameters depend on the operation.
+All requests require a `type` parameter. Other parameters depend on the operation. Use the fields below in the Try it panel; the tables describe which apply to each `type`.
 
-<ParamField query="type" type="string" required>
-  Operation type: `decode`, `batch`, `wmi`, `makes`, `manufacturers`, `variables`, or `canadian`
+<ParamField query="type" type="string" required placeholder="decode | batch | wmi | makes | manufacturers | variables | canadian">
+  Operation type
+</ParamField>
+
+<ParamField query="query" type="string" placeholder="VIN, WMI, or search term (depends on type)">
+  VIN (decode/batch), WMI code (wmi), or search term (makes, manufacturers, variables). Not used for canadian.
+</ParamField>
+
+<ParamField query="model_year" type="number" placeholder="e.g. 2021">
+  Model year 1981+. For type=decode only. Recommended for partial VINs.
+</ParamField>
+
+<ParamField query="extended" type="boolean" default="false">
+  If true, include extended NHTSA variables. For type=decode only.
+</ParamField>
+
+<ParamField query="search_type" type="string" placeholder="all | manufacturer | vehicletype | models | vehicletypes (makes); all | details | wmis | parts (manufacturers); list | values (variables)">
+  Sub-operation. Required for type=makes, manufacturers, variables.
+</ParamField>
+
+<ParamField query="year" type="number" placeholder="e.g. 2023">
+  Model year. For type=makes (manufacturer, models) and type=canadian (required).
+</ParamField>
+
+<ParamField query="vehicle_type" type="string" placeholder="e.g. Passenger Car, Truck">
+  e.g. Passenger Car, Truck. For type=makes (models) and type=manufacturers (wmis).
+</ParamField>
+
+<ParamField query="mfr_type" type="string" placeholder="e.g. Completed Vehicle Manufacturer">
+  Manufacturer type filter. For type=manufacturers, search_type=all.
+</ParamField>
+
+<ParamField query="from_date" type="string" placeholder="YYYY-MM-DD">
+  Start date. Required for type=manufacturers, search_type=parts.
+</ParamField>
+
+<ParamField query="to_date" type="string" placeholder="YYYY-MM-DD">
+  End date. Required for type=manufacturers, search_type=parts.
+</ParamField>
+
+<ParamField query="parts_type" type="string" default="565" placeholder="565 | 566">
+  Parts doc type. For type=manufacturers, search_type=parts. Default: 565.
+</ParamField>
+
+<ParamField query="page" type="number" default="1" placeholder="1">
+  Page number. For type=manufacturers. Default: 1.
+</ParamField>
+
+<ParamField query="make" type="string" placeholder="e.g. Honda, Toyota">
+  Make. Required for type=canadian.
+</ParamField>
+
+<ParamField query="model" type="string" placeholder="e.g. Civic">
+  Model name. For type=canadian.
+</ParamField>
+
+<ParamField query="units" type="string" default="Metric" placeholder="Metric | Imperial">
+  Units for type=canadian. Metric or Imperial (Imperial is sent as US to the API). Default: Metric.
 </ParamField>
 
 ---
