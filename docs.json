@@ -82,6 +82,12 @@
             "pages": [
               "api-reference/endpoint/discord-stalker"
             ]
+          },
+          {
+            "group": "Machine Viewer",
+            "pages": [
+              "api-reference/endpoint/machine-viewer"
+            ]
           }
         ]
       }
