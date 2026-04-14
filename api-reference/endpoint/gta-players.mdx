@@ -1,0 +1,215 @@
+---
+title: 'GTA Online — Players'
+api: 'GET https://www.osintcat.net/api/gta/players'
+---
+
+Search tracked GTA Online players by display name or Rockstar ID. Returns platform, last seen timestamp, and full raw data for each match.
+
+## Parameters
+
+<ParamField query="query" type="string" required>
+  The search value — a player name (partial match) or Rockstar ID (exact match)
+</ParamField>
+
+<ParamField query="type" type="string" default="name">
+  Search mode. `name` for display name lookup, `rid` for Rockstar ID lookup
+</ParamField>
+
+## Headers
+
+<ParamField header="X-API-KEY" type="string" required>
+  Your API key
+</ParamField>
+
+## Response
+
+<ResponseField name="results" type="array">
+  List of matched player objects
+  <Expandable title="Player object">
+    <ResponseField name="rid" type="integer">Rockstar ID</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="platform" type="string">Platform (`pc`, `ps`, `xbox`)</ResponseField>
+    <ResponseField name="last_seen" type="integer">Unix timestamp of last recorded presence</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="results_count" type="integer">Number of results returned</ResponseField>
+<ResponseField name="elapsed_ms" type="number">Server-side processing time in milliseconds</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/gta/players?query=salzling&type=name" \
+     -H "X-API-KEY: YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/gta/players"
+params = {
+    "query": "salzling",
+    "type": "name"
+}
+headers = {"X-API-KEY": "YOUR_API_KEY"}
+
+response = requests.get(url, params=params, headers=headers)
+
+if response.ok:
+    print(response.json())
+else:
+    print(f"Error: {response.status_code}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/gta/players?query=salzling&type=name';
+
+fetch(url, {
+    headers: { 'X-API-KEY': 'YOUR_API_KEY' }
+})
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error('error:' + err));
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+
+$url = "https://www.osintcat.net/api/gta/players?query=salzling&type=name";
+
+curl_setopt_array($curl, [
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ["X-API-KEY: YOUR_API_KEY"],
+]);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error: " . $err;
+} else {
+    echo $response;
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/gta/players"
+    params := url.Values{}
+    params.Add("query", "salzling")
+    params.Add("type", "name")
+
+    fullURL := baseURL + "?" + params.Encode()
+
+    req, _ := http.NewRequest("GET", fullURL, nil)
+    req.Header.Set("X-API-KEY", "YOUR_API_KEY")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+
+    body, _ := io.ReadAll(resp.Body)
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    fmt.Printf("%+v\n", result)
+}
+```
+
+```ruby Ruby
+require 'net/http'
+require 'json'
+require 'uri'
+
+uri = URI('https://www.osintcat.net/api/gta/players')
+uri.query = URI.encode_www_form({ query: 'salzling', type: 'name' })
+
+request = Net::HTTP::Get.new(uri)
+request['X-API-KEY'] = 'YOUR_API_KEY'
+
+response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(request)
+end
+
+if response.is_a?(Net::HTTPSuccess)
+    puts JSON.pretty_generate(JSON.parse(response.body))
+else
+    puts "Error: #{response.code}"
+end
+```
+
+```java Java
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class OsintCatAPI {
+    public static void main(String[] args) {
+        try {
+            String apiUrl = "https://www.osintcat.net/api/gta/players?query=salzling&type=name";
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("X-API-KEY", "YOUR_API_KEY");
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) response.append(inputLine);
+                in.close();
+                System.out.println(response.toString());
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```csharp C#
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        using (var client = new HttpClient())
+        {
+            client.DefaultRequestHeaders.Add("X-API-KEY", "YOUR_API_KEY");
+            var response = await client.GetAsync(
+                "https://www.osintcat.net/api/gta/players?query=salzling&type=name");
+
+            if (response.IsSuccessStatusCode)
+                Console.WriteLine(await response.Content.ReadAsStringAsync());
+            else
+                Console.WriteLine($"Error: {response.StatusCode}");
+        }
+    }
+}
+```
+</CodeGroup>
