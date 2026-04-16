@@ -78,6 +78,13 @@
             ]
           },
           {
+            "group": "Gaming",
+            "pages": [
+              "api-reference/endpoint/gta-players",
+              "api-reference/endpoint/gta-spotted"
+            ]
+          },
+          {
             "group": "Monitoring",
             "pages": [
               "api-reference/endpoint/discord-stalker"
