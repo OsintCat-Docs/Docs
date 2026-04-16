@@ -1,0 +1,149 @@
+---
+title: 'US NPD Search'
+api: 'GET https://www.osintcat.net/api/npd'
+description: "Search National Public Data (NPD) records for individuals in the US using various identifiers."
+---
+
+The National Public Data (NPD) endpoint allows you to query a massive leak of US personal records. Due to the size of the database, you are required to provide either a highly unique identifier (like an SSN) **OR** a combination of a First and Last name. 
+
+To improve the accuracy of your results and reduce "noise" (false positives), it is highly recommended to combine name queries with a location (`state`, `city`, or `zip`).
+
+### Best Practices for Querying
+
+- **Exact Matches (Direct Hit)**: If you have a Social Security Number (`ssn`), only pass the `ssn` parameter. This will yield the most accurate and unique direct hit.
+- **Name Targeting**: When querying by name (`first_name` and `last_name`), there will often be too many matches for common names. If possible, add `state` or `dob` to narrow down the results specifically.
+- **Wildcards**: The `first_name` and `last_name` parameters automatically act as partial matching queries (e.g. "John" will match "Johnny"). Keep this in mind when typing short names.
+
+## Parameters
+
+You must provide either an `ssn` OR both `first_name` and `last_name`.
+
+<ParamField query="first_name" type="string">
+  First name of the person (required if SSN is not provided).
+</ParamField>
+
+<ParamField query="last_name" type="string">
+  Last name of the person (required if SSN is not provided).
+</ParamField>
+
+<ParamField query="ssn" type="string">
+  Social Security Number (required if First and Last name are not provided). Format can be flexible depending on the raw data, but standard `000-00-0000` or `000000000` is recommended.
+</ParamField>
+
+<ParamField query="phone" type="string">
+  Optional phone number filter. 
+</ParamField>
+
+<ParamField query="city" type="string">
+  Optional city filter (e.g., `Los Angeles`).
+</ParamField>
+
+<ParamField query="state" type="string">
+  Optional state filter (e.g., `CA`, `NY`). Use the standard two-letter abbreviation.
+</ParamField>
+
+<ParamField query="zip" type="string">
+  Optional zip code filter.
+</ParamField>
+
+<ParamField query="dob" type="string">
+  Optional date of birth filter.
+</ParamField>
+
+## Headers
+
+<ParamField header="X-API-KEY" type="string" required>
+  Your OsintCat API key.
+</ParamField>
+
+## Response Structure
+
+The endpoint responds with a structured JSON containing a `meta` object with performance metrics and a `data` array containing the matched identities.
+
+<ResponseExample>
+```json Response
+[
+    {
+        "identity": {
+            "firstname": "JOHN",
+            "lastname": "DOE",
+            "ssn": "xxx-xx-xxxx"
+        },
+        "location": {
+            "address": "123 MAIN ST APT 4B",
+            "city": "LOS ANGELES",
+            "state": "CA",
+            "zip": "90001"
+        },
+        "contact": {
+            "phone": "555-019-2831"
+        },
+        "personal": {
+            "dob": "1980-05-14"
+        },
+        "raw_data": {
+            "address": "123 MAIN ST APT 4B",
+            "city": "LOS ANGELES",
+            "county": "LOS ANGELES",
+            "dob": "1980-05-14",
+            "firstname": "JOHN",
+            "lastname": "DOE",
+            "mobile": "555-019-2831",
+            "state": "CA",
+            "zip": "90001"
+        },
+        "source": "NPD_2024"
+    }
+]
+```
+</ResponseExample>
+
+## Example Requests
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&state=CA" \
+     -H "X-API-KEY: YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/npd"
+params = {
+    "first_name": "John",
+    "last_name": "Doe",
+    "state": "CA"
+}
+headers = {
+    "X-API-KEY": "YOUR_API_KEY"
+}
+
+response = requests.get(url, params=params, headers=headers)
+
+if response.status_code == 200:
+    results = response.json()
+    print(f"Found {len(results)} records.")
+    for person in results:
+        print(person['identity']['firstname'], person['identity']['lastname'], person['location']['state'])
+else:
+    print(f"Error: {response.text}")
+```
+
+```javascript Node.js
+const url = 'https://www.osintcat.net/api/npd?first_name=John&last_name=Doe&state=CA';
+
+fetch(url, {
+    method: 'GET',
+    headers: {
+        'X-API-KEY': 'YOUR_API_KEY'
+    }
+})
+.then(res => res.json())
+.then(data => {
+    console.log(`Matched Records: ${data.length}`);
+    console.log(data);
+})
+.catch(err => console.error('Error:', err));
+```
+</CodeGroup>

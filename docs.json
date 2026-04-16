@@ -45,7 +45,6 @@
               "api-reference/endpoint/roblox",
               "api-reference/endpoint/reddit",
               "api-reference/endpoint/discord-to-roblox",
-              
               "api-reference/endpoint/phone-osint",
               "api-reference/endpoint/email-osint",
               "api-reference/endpoint/github-osint",
@@ -68,7 +67,8 @@
           {
             "group": "Public Records",
             "pages": [
-              "api-reference/endpoint/chilean-name"
+              "api-reference/endpoint/chilean-name",
+              "api-reference/endpoint/npd"
             ]
           },
           {
@@ -87,6 +87,12 @@
             "group": "Machine Viewer",
             "pages": [
               "api-reference/endpoint/machine-viewer"
+            ]
+          },
+          {
+            "group": "Email OSINT",
+            "pages": [
+              "api-reference/endpoint/email-footprint"
             ]
           }
         ]
