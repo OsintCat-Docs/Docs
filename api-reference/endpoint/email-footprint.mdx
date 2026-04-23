@@ -1,0 +1,155 @@
+---
+title: 'Email Footprint'
+description: 'Discover platform registrations for an email address across 100+ services'
+---
+
+The Email Footprint API checks if a specific email address is registered across social media, shopping, and professional platforms.
+It returns a summary of stats and a per-platform breakdown including secondary metadata like usernames or account status where available.
+
+---
+
+## Scan Email
+
+```bash
+GET https://www.osintcat.net/api/email-footprint
+```
+
+<ParamField query="query" type="string" required>
+  The email address to scan (e.g., `user@gmail.com`)
+</ParamField>
+
+<ParamField header="X-API-KEY" type="string" required>
+  Your API key
+</ParamField>
+
+**Response Body**
+
+<ResponseField name="email" type="string">
+  The email address that was checked.
+</ResponseField>
+
+<ResponseField name="stats" type="object">
+  <Expandable title="properties">
+    <ResponseField name="total_checked" type="number">Total number of platforms checked</ResponseField>
+    <ResponseField name="registered_count" type="number">Number of platforms where the email was found</ResponseField>
+    <ResponseField name="not_registered_count" type="number">Number of platforms where the email was not found</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="results" type="array">
+  List of platform results.
+  <Expandable title="item properties">
+    <ResponseField name="domain" type="string">Platform domain (e.g., `github.com`)</ResponseField>
+    <ResponseField name="taken" type="boolean">True if the email is registered on this platform</ResponseField>
+    <ResponseField name="type" type="string">Detection method (`API` or `REGISTER`)</ResponseField>
+    <ResponseField name="time_taken" type="string">Duration of the check for this platform</ResponseField>
+    <ResponseField name="ExtraData" type="object">
+      Metadata retrieved from the platform (usernames, IDs, status, etc.)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<CodeGroup>
+```bash cURL
+curl "https://www.osintcat.net/api/email-footprint?query=john@gmail.com" \
+     -H "X-API-KEY: YOUR_API_KEY"
+```
+
+```python Python
+import requests
+
+url = "https://www.osintcat.net/api/email-footprint"
+params = {"query": "john@gmail.com"}
+headers = {"X-API-KEY": "YOUR_API_KEY"}
+
+response = requests.get(url, params=params, headers=headers)
+print(response.json())
+```
+
+```javascript Node.js
+fetch('https://www.osintcat.net/api/email-footprint?query=john@gmail.com', {
+    headers: { 'X-API-KEY': 'YOUR_API_KEY' }
+}).then(r => r.json()).then(console.log);
+```
+
+```php PHP
+<?php
+
+$curl = curl_init();
+$url = "https://www.osintcat.net/api/email-footprint?query=john@gmail.com";
+
+curl_setopt_array($curl, [
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ["X-API-KEY: YOUR_API_KEY"],
+]);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+
+if ($err) {
+    echo "cURL Error #:" . $err;
+} else {
+    echo $response;
+}
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://www.osintcat.net/api/email-footprint"
+    params := url.Values{}
+    params.Add("query", "john@gmail.com")
+
+    req, _ := http.NewRequest("GET", baseURL+"?"+params.Encode(), nil)
+    req.Header.Set("X-API-KEY", "YOUR_API_KEY")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        fmt.Printf("Error: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+
+    body, _ := io.ReadAll(resp.Body)
+    var result map[string]interface{}
+    json.Unmarshal(body, &result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+**Example Response**
+```json
+{
+  "email": "john@gmail.com",
+  "stats": {
+    "total_checked": 119,
+    "registered_count": 95,
+    "not_registered_count": 24
+  },
+  "results": [
+    {
+      "domain": "github.com",
+      "taken": true,
+      "type": "API",
+      "time_taken": "1.2s",
+      "ExtraData": {
+        "Username": "johnny123",
+        "PublicRepos": 42
+      }
+    }
+  ]
+}
+```

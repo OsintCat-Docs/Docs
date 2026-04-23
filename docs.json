@@ -52,8 +52,7 @@
               "api-reference/endpoint/minecraft",
               "api-reference/endpoint/minecraft-osint",
               "api-reference/endpoint/twitter-osint",
-              "api-reference/endpoint/user-osint",
-              "api-reference/endpoint/database"
+              "api-reference/endpoint/stealer-logs"
             ]
           },
           {
@@ -95,11 +94,22 @@
             "pages": [
               "api-reference/endpoint/machine-viewer"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Footprint Intel",
+        "groups": [
           {
-            "group": "Email OSINT",
+            "group": "Email",
             "pages": [
               "api-reference/endpoint/email-footprint"
+            ]
+          },
+          {
+            "group": "Username",
+            "pages": [
+              "api-reference/endpoint/user-footprint"
             ]
           }
         ]
