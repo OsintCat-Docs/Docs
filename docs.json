@@ -47,8 +47,6 @@
               "api-reference/endpoint/discord-to-roblox",
               "api-reference/endpoint/phone-osint",
               "api-reference/endpoint/email-osint",
-              "api-reference/endpoint/github-osint",
-              "api-reference/endpoint/github-userinfo",
               "api-reference/endpoint/minecraft",
               "api-reference/endpoint/minecraft-osint",
               "api-reference/endpoint/twitter-osint",
@@ -94,26 +92,17 @@
             "pages": [
               "api-reference/endpoint/machine-viewer"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Footprint Intel",
-        "groups": [
-          {
-            "group": "Email",
-            "pages": [
-              "api-reference/endpoint/email-footprint"
-            ]
           },
           {
-            "group": "Username",
+            "group": "FootPrint Intel",
             "pages": [
+              "api-reference/endpoint/email-footprint",
               "api-reference/endpoint/user-footprint"
             ]
           }
         ]
       }
+
     ]
   },
   "logo": {
