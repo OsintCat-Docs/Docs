@@ -88,6 +88,13 @@
             ]
           },
           {
+            "group": "Resolvers",
+            "pages": [
+              "api-reference/endpoint/tiktok-resolver",
+              "api-reference/endpoint/instagram-resolver"
+            ]
+          },
+          {
             "group": "Machine Viewer",
             "pages": [
               "api-reference/endpoint/machine-viewer"
