@@ -43,13 +43,11 @@
               "api-reference/endpoint/breach",
               "api-reference/endpoint/discord",
               "api-reference/endpoint/roblox",
-              "api-reference/endpoint/reddit",
               "api-reference/endpoint/discord-to-roblox",
               "api-reference/endpoint/phone-osint",
               "api-reference/endpoint/email-osint",
               "api-reference/endpoint/minecraft",
               "api-reference/endpoint/minecraft-osint",
-              "api-reference/endpoint/twitter-osint",
               "api-reference/endpoint/stealer-logs"
             ]
           },
@@ -64,8 +62,7 @@
           {
             "group": "Public Records",
             "pages": [
-              "api-reference/endpoint/chilean-name",
-              "api-reference/endpoint/npd"
+              "api-reference/endpoint/chilean-name"
             ]
           },
           {
@@ -79,12 +76,6 @@
             "pages": [
               "api-reference/endpoint/gta-players",
               "api-reference/endpoint/gta-spotted"
-            ]
-          },
-          {
-            "group": "Monitoring",
-            "pages": [
-              "api-reference/endpoint/discord-stalker"
             ]
           },
           {
