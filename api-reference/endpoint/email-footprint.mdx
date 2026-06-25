@@ -1,99 +1,225 @@
 ---
 title: 'Email Footprint'
-api: 'GET https://www.osintcat.net/api/user-Footprint'
+api: 'GET https://www.osintcat.net/api/footprint/create-task'
 description: 'Discover platform registrations for an email address across 100+ services'
 ---
 
-The Email Footprint API checks if a specific email address is registered across social media, shopping, and professional platforms.
+The Email Footprint API checks whether a specific email address is registered across social media, shopping, and professional platforms.
 It returns a summary of stats and a per-platform breakdown including secondary metadata like usernames or account status where available.
+
+The lookup backend is load-balanced, so footprint scans run as **asynchronous tasks**:
+
+1. **Create a task** with `GET /api/footprint/create-task` (this is where one lookup is charged). You receive a `task_id`.
+2. **Poll the task** with `GET /api/footprint/get-task?id=<task_id>` until `status` is no longer a running state. Polling is free.
+
+<Note>
+Email and username footprints share the same task endpoints — only the `type` parameter differs (`email` vs `username`).
+</Note>
 
 ---
 
-## Scan Email
+## Step 1 — Create Task
 
 ```bash
-GET https://www.osintcat.net/api/email-footprint
+GET https://www.osintcat.net/api/footprint/create-task
 ```
 
 <ParamField query="query" type="string" required>
   The email address to scan (e.g., `user@gmail.com`)
 </ParamField>
 
+<ParamField query="type" type="string" default="email">
+  The footprint type. Use `email` for this endpoint.
+</ParamField>
+
 <ParamField header="X-API-KEY" type="string" required>
   Your API key
 </ParamField>
 
+<Warning>
+Creating a task consumes exactly **one lookup** from your daily quota. Polling `get-task` does not.
+</Warning>
+
 **Response Body**
 
-<ResponseField name="email" type="string">
-  The email address that was checked.
+<ResponseField name="task_id" type="string">
+  The identifier used to poll for results.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The initial task status (e.g., `running`, `queued`, `pending`).
+</ResponseField>
+
+<ResponseField name="_meta" type="object">
+  <Expandable title="properties">
+    <ResponseField name="plan" type="string">Your current plan.</ResponseField>
+    <ResponseField name="lookups_left" type="string">Remaining lookups for the day (`unlimited` on the Max plan).</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "task_id": "f3c8a1e2-9b44-4d51-bd0a-1c2e3f4a5b6c",
+  "status": "running",
+  "_meta": {
+    "plan": "researcher",
+    "lookups_left": 4821
+  }
+}
+```
+
+---
+
+## Step 2 — Poll Task
+
+```bash
+GET https://www.osintcat.net/api/footprint/get-task
+```
+
+<ParamField query="id" type="string" required>
+  The `task_id` returned by `create-task`.
+</ParamField>
+
+<ParamField header="X-API-KEY" type="string" required>
+  Your API key
+</ParamField>
+
+Poll roughly once per second until `status` is no longer one of the running states
+(`running`, `queued`, `pending`, `processing`, `started`). A scan typically completes
+within a few seconds and is capped at ~3 minutes.
+
+**Response Body**
+
+<ResponseField name="status" type="string">
+  Current task status. While running it is one of `running`, `queued`, `pending`,
+  `processing`, `started`. Any other value (e.g., `done`, `finished`) means the scan is complete.
 </ResponseField>
 
 <ResponseField name="stats" type="object">
+  Live progress / summary counters (populated as the scan runs).
   <Expandable title="properties">
-    <ResponseField name="total_checked" type="number">Total number of platforms checked</ResponseField>
-    <ResponseField name="registered_count" type="number">Number of platforms where the email was found</ResponseField>
-    <ResponseField name="not_registered_count" type="number">Number of platforms where the email was not found</ResponseField>
+    <ResponseField name="checked" type="number">Number of platforms checked so far.</ResponseField>
+    <ResponseField name="total_modules" type="number">Total number of platforms in the scan.</ResponseField>
+    <ResponseField name="found" type="number">Number of platforms where the email was found.</ResponseField>
+    <ResponseField name="elapsed" type="string">Elapsed scan time.</ResponseField>
   </Expandable>
 </ResponseField>
 
 <ResponseField name="results" type="array">
-  List of platform results.
+  List of platform results (grows as the scan progresses).
   <Expandable title="item properties">
     <ResponseField name="domain" type="string">Platform domain (e.g., `github.com`)</ResponseField>
     <ResponseField name="taken" type="boolean">True if the email is registered on this platform</ResponseField>
-    <ResponseField name="type" type="string">Detection method (`API` or `REGISTER`)</ResponseField>
-    <ResponseField name="time_taken" type="string">Duration of the check for this platform</ResponseField>
     <ResponseField name="ExtraData" type="object">
       Metadata retrieved from the platform (usernames, IDs, status, etc.)
     </ResponseField>
   </Expandable>
 </ResponseField>
 
+---
+
+## Example
+
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/email-footprint?query=john@gmail.com" \
+# 1. Create the task
+curl "https://www.osintcat.net/api/footprint/create-task?query=john@gmail.com&type=email" \
+     -H "X-API-KEY: YOUR_API_KEY"
+
+# 2. Poll until done (replace TASK_ID with the returned task_id)
+curl "https://www.osintcat.net/api/footprint/get-task?id=TASK_ID" \
      -H "X-API-KEY: YOUR_API_KEY"
 ```
 
 ```python Python
+import time
 import requests
 
-url = "https://www.osintcat.net/api/email-footprint"
-params = {"query": "john@gmail.com"}
-headers = {"X-API-KEY": "YOUR_API_KEY"}
+BASE = "https://www.osintcat.net"
+HEADERS = {"X-API-KEY": "YOUR_API_KEY"}
+RUNNING = {"running", "queued", "pending", "processing", "started"}
 
-response = requests.get(url, params=params, headers=headers)
-print(response.json())
+# 1. Create the task (charges one lookup)
+task = requests.get(
+    f"{BASE}/api/footprint/create-task",
+    params={"query": "john@gmail.com", "type": "email"},
+    headers=HEADERS,
+).json()
+task_id = task["task_id"]
+
+# 2. Poll until the scan finishes
+while True:
+    data = requests.get(
+        f"{BASE}/api/footprint/get-task",
+        params={"id": task_id},
+        headers=HEADERS,
+    ).json()
+    if str(data.get("status", "")).lower() not in RUNNING:
+        break
+    time.sleep(1)
+
+print(data)
 ```
 
 ```javascript Node.js
-fetch('https://www.osintcat.net/api/email-footprint?query=john@gmail.com', {
-    headers: { 'X-API-KEY': 'YOUR_API_KEY' }
-}).then(r => r.json()).then(console.log);
+const BASE = 'https://www.osintcat.net';
+const HEADERS = { 'X-API-KEY': 'YOUR_API_KEY' };
+const RUNNING = ['running', 'queued', 'pending', 'processing', 'started'];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+(async () => {
+  // 1. Create the task (charges one lookup)
+  const task = await fetch(
+    `${BASE}/api/footprint/create-task?query=john@gmail.com&type=email`,
+    { headers: HEADERS }
+  ).then(r => r.json());
+
+  // 2. Poll until the scan finishes
+  let data;
+  do {
+    data = await fetch(
+      `${BASE}/api/footprint/get-task?id=${encodeURIComponent(task.task_id)}`,
+      { headers: HEADERS }
+    ).then(r => r.json());
+    if (!RUNNING.includes(String(data.status).toLowerCase())) break;
+    await sleep(1000);
+  } while (true);
+
+  console.log(data);
+})();
 ```
 
 ```php PHP
 <?php
 
-$curl = curl_init();
-$url = "https://www.osintcat.net/api/email-footprint?query=john@gmail.com";
+$base = "https://www.osintcat.net";
+$headers = ["X-API-KEY: YOUR_API_KEY"];
+$running = ["running", "queued", "pending", "processing", "started"];
 
-curl_setopt_array($curl, [
-    CURLOPT_URL => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ["X-API-KEY: YOUR_API_KEY"],
-]);
-
-$response = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
-
-if ($err) {
-    echo "cURL Error #:" . $err;
-} else {
-    echo $response;
+function get_json($url, $headers) {
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => $headers,
+    ]);
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return json_decode($response, true);
 }
+
+// 1. Create the task (charges one lookup)
+$task = get_json("$base/api/footprint/create-task?query=john@gmail.com&type=email", $headers);
+$taskId = $task["task_id"];
+
+// 2. Poll until the scan finishes
+do {
+    $data = get_json("$base/api/footprint/get-task?id=" . urlencode($taskId), $headers);
+    if (!in_array(strtolower($data["status"]), $running)) break;
+    sleep(1);
+} while (true);
+
+print_r($data);
 ```
 
 ```go Go
@@ -105,47 +231,61 @@ import (
     "io"
     "net/http"
     "net/url"
+    "strings"
+    "time"
 )
 
+func getJSON(u string) map[string]interface{} {
+    req, _ := http.NewRequest("GET", u, nil)
+    req.Header.Set("X-API-KEY", "YOUR_API_KEY")
+    resp, _ := http.DefaultClient.Do(req)
+    defer resp.Body.Close()
+    body, _ := io.ReadAll(resp.Body)
+    var out map[string]interface{}
+    json.Unmarshal(body, &out)
+    return out
+}
+
 func main() {
-    baseURL := "https://www.osintcat.net/api/email-footprint"
+    base := "https://www.osintcat.net"
+    running := map[string]bool{"running": true, "queued": true, "pending": true, "processing": true, "started": true}
+
+    // 1. Create the task (charges one lookup)
     params := url.Values{}
     params.Add("query", "john@gmail.com")
+    params.Add("type", "email")
+    task := getJSON(base + "/api/footprint/create-task?" + params.Encode())
+    taskID, _ := task["task_id"].(string)
 
-    req, _ := http.NewRequest("GET", baseURL+"?"+params.Encode(), nil)
-    req.Header.Set("X-API-KEY", "YOUR_API_KEY")
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        fmt.Printf("Error: %v\n", err)
-        return
+    // 2. Poll until the scan finishes
+    var data map[string]interface{}
+    for {
+        data = getJSON(base + "/api/footprint/get-task?id=" + url.QueryEscape(taskID))
+        status, _ := data["status"].(string)
+        if !running[strings.ToLower(status)] {
+            break
+        }
+        time.Sleep(time.Second)
     }
-    defer resp.Body.Close()
-
-    body, _ := io.ReadAll(resp.Body)
-    var result map[string]interface{}
-    json.Unmarshal(body, &result)
-    fmt.Printf("%+v\n", result)
+    fmt.Printf("%+v\n", data)
 }
 ```
 </CodeGroup>
 
-**Example Response**
+**Example Result (completed task)**
 ```json
 {
-  "email": "john@gmail.com",
+  "status": "done",
   "stats": {
-    "total_checked": 119,
-    "registered_count": 95,
-    "not_registered_count": 24
+    "checked": 119,
+    "total_modules": 119,
+    "found": 95,
+    "elapsed": "6.4s"
   },
   "results": [
     {
       "domain": "github.com",
       "taken": true,
-      "type": "API",
-      "time_taken": "1.2s",
       "ExtraData": {
         "Username": "johnny123",
         "PublicRepos": 42

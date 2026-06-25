@@ -1,14 +1,20 @@
 ---
-title: 'Roblox Lookup'
+title: 'Roblox to Discord'
 api: 'GET https://www.osintcat.net/api/roblox'
 ---
 
-Get detailed information about a Roblox user by their username.
+Find Discord accounts linked to a Roblox username. Searches our database of scraped Roblox-to-Discord mappings and returns matching profiles with Discord ID, username, and avatar where available.
 
 ## Parameters
 
 <ParamField query="query" type="string" required>
-  Roblox username
+  Roblox username. Wildcard `*` is supported:
+
+  - `demon*` — usernames starting with `demon`
+  - `*boy` — usernames ending with `boy`
+  - `*123*` — usernames containing `123`
+
+  Plain queries (no `*`) match the username exactly (case-insensitive). Up to 50 results are returned.
 </ParamField>
 
 ## Headers
@@ -19,13 +25,38 @@ Get detailed information about a Roblox user by their username.
 
 ## Response
 
-Returns detailed Roblox user information including profile data, statistics, and more.
+Returns a list of matches from the database. Each result contains the Roblox username and, if a linked Discord account is on file, the Discord ID plus username and avatar URL fetched live from Discord.
+
+```json
+{
+  "query": "demon*",
+  "count": 2,
+  "results": [
+    {
+      "roblox_name": "demonboy",
+      "discord_id": "123456789012345678",
+      "discord_username": "demon",
+      "discord_avatar": "https://cdn.discordapp.com/avatars/123456789012345678/abc123.png?size=128"
+    },
+    {
+      "roblox_name": "demon123",
+      "discord_id": null
+    }
+  ]
+}
+```
+
+If no matches are found, the API returns:
+
+```json
+{ "error": "No matches found in database." }
+```
 
 ## Example Request
 
 <CodeGroup>
 ```bash cURL
-curl "https://www.osintcat.net/api/roblox?query=RobloxUsername" \
+curl "https://www.osintcat.net/api/roblox?query=demon*" \
      -H "X-API-KEY: YOUR_API_KEY"
 ```
 
@@ -33,7 +64,7 @@ curl "https://www.osintcat.net/api/roblox?query=RobloxUsername" \
 import requests
 
 url = "https://www.osintcat.net/api/roblox"
-params = {"query": "RobloxUsername"}
+params = {"query": "demon*"}
 headers = {"X-API-KEY": "YOUR_API_KEY"}
 
 response = requests.get(url, params=params, headers=headers)
@@ -45,7 +76,7 @@ else:
 ```
 
 ```javascript Node.js
-const url = 'https://www.osintcat.net/api/roblox?query=RobloxUsername';
+const url = 'https://www.osintcat.net/api/roblox?query=demon*';
 
 fetch(url, {
     headers: {
@@ -62,7 +93,7 @@ fetch(url, {
 
 $curl = curl_init();
 
-$url = "https://www.osintcat.net/api/roblox?query=RobloxUsername";
+$url = "https://www.osintcat.net/api/roblox?query=" . urlencode("demon*");
 
 curl_setopt_array($curl, [
     CURLOPT_URL => $url,
@@ -98,13 +129,13 @@ import (
 func main() {
     baseURL := "https://www.osintcat.net/api/roblox"
     params := url.Values{}
-    params.Add("query", "RobloxUsername")
-    
+    params.Add("query", "demon*")
+
     fullURL := baseURL + "?" + params.Encode()
-    
+
     req, _ := http.NewRequest("GET", fullURL, nil)
     req.Header.Set("X-API-KEY", "YOUR_API_KEY")
-    
+
     client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
@@ -112,7 +143,7 @@ func main() {
         return
     }
     defer resp.Body.Close()
-    
+
     body, _ := io.ReadAll(resp.Body)
     var result map[string]interface{}
     json.Unmarshal(body, &result)
@@ -126,7 +157,7 @@ require 'json'
 require 'uri'
 
 uri = URI('https://www.osintcat.net/api/roblox')
-uri.query = URI.encode_www_form({ query: 'RobloxUsername' })
+uri.query = URI.encode_www_form({ query: 'demon*' })
 
 request = Net::HTTP::Get.new(uri)
 request['X-API-KEY'] = 'YOUR_API_KEY'
@@ -146,18 +177,21 @@ end
 ```java Java
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class OsintCatAPI {
     public static void main(String[] args) {
         try {
-            String apiUrl = "https://www.osintcat.net/api/roblox?query=RobloxUsername";
+            String query = URLEncoder.encode("demon*", StandardCharsets.UTF_8);
+            String apiUrl = "https://www.osintcat.net/api/roblox?query=" + query;
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("X-API-KEY", "YOUR_API_KEY");
-            
+
             int responseCode = conn.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -182,6 +216,7 @@ public class OsintCatAPI {
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 class Program
 {
@@ -191,11 +226,12 @@ class Program
         {
             try
             {
-                string url = "https://www.osintcat.net/api/roblox?query=RobloxUsername";
+                string query = HttpUtility.UrlEncode("demon*");
+                string url = $"https://www.osintcat.net/api/roblox?query={query}";
                 client.DefaultRequestHeaders.Add("X-API-KEY", "YOUR_API_KEY");
-                
+
                 var response = await client.GetAsync(url);
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
