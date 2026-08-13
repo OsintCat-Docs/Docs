@@ -1,3 +1,18 @@
+// Context7 AI Chat Widget
+(function() {
+    'use strict';
+
+    if (document.querySelector('script[src="https://context7.com/widget.js"]')) {
+        return;
+    }
+
+    const widget = document.createElement('script');
+    widget.src = 'https://context7.com/widget.js';
+    widget.async = true;
+    widget.setAttribute('data-library', '/websites/osintcat_net');
+    document.head.appendChild(widget);
+})();
+
 // OsintCat Custom Header and Hide Mintlify Link
 (function() {
     'use strict';
